@@ -347,7 +347,7 @@ var _maq = _maq || [];
             enterTime = new Date().getTime();
             _send(_serilize(params));
         }
-    })
+    });
     
     // 单页应用使用history模式的情况下需要自定义pushstate和replacestate事件
     (function(history){
@@ -374,13 +374,13 @@ var _maq = _maq || [];
         
         params.referrer = e.url;
         enterTime = new Date().getTime();
-    })
+    });
     _addEvent(history,'replacestate',function(e){
             _sendOnLeave()
             
             params.referrer = e.url;
             enterTime = new Date().getTime();
-    })
+    });
 
     function _addEvent(element, evType, fn, useCapture) {
         if (element.addEventListener) {
