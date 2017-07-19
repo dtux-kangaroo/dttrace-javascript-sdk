@@ -233,7 +233,7 @@ var _maq = _maq || [];
             case '_pageview':
                 var p2 = params;
                 // params.triggerType = 'pageview';
-                p2.triggerType = 'enter';
+                p2.triggerType = 'state_enter';
                 enterTime = new Date().getTime();
                 p2.stayTime = '';
                 p2.url = location.protocol + location.host + arr[1];
@@ -312,10 +312,10 @@ var _maq = _maq || [];
         enterTime = new Date().getTime();
         _send(_serilize(params));
     }
-    function _sendOnLeave(){
+    function _sendOnLeave(type){
         // _init();
         var leaveTime = new Date().getTime();
-        params.triggerType = 'leave';
+        params.triggerType = type || 'leave';
         params.stayTime = leaveTime - enterTime;
         _send(_serilize(params));
     }
@@ -340,8 +340,8 @@ var _maq = _maq || [];
     // 单页应用hash模式下监听事件
     _addEvent(window,'hashchange',function(e){
         if(e.oldURL != e.newURL){
-            _sendOnLeave();
-            params.triggerType = 'enter';
+            _sendOnLeave('state_leave');
+            params.triggerType = 'state_enter';
             params.url = e.newURL;
             params.referrer = e.oldURL;
             enterTime = new Date().getTime();
@@ -368,15 +368,21 @@ var _maq = _maq || [];
             return replaceState.apply(history, arguments);
         }
     })(window.history);
+	// 监听浏览器前进后退行为，发送leave请求，更新referrer
+	_addEvent(window,'popstate',function(e){
+		_sendOnLeave('state_leave');
+		params.referrer = params.url;
+		enterTime = new Date().getTime();
+	})
     // history api事件监听
     _addEvent(history,'pushstate',function(e){
-        _sendOnLeave();
+        _sendOnLeave('state_leave');
         
         params.referrer = e.url;
         enterTime = new Date().getTime();
     });
     _addEvent(history,'replacestate',function(e){
-            _sendOnLeave()
+            _sendOnLeave('state_leave')
             
             params.referrer = e.url;
             enterTime = new Date().getTime();
