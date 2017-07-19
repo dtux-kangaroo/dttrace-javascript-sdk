@@ -167,7 +167,7 @@ var _maq = _maq || [];
 
     function _init() {
         // 判断token是否存在，如果不在则结束
-        params.code = 'lOZVMROz1R1luHyRU9AKNFOcwyY2kr3eMEAjtSeP7ZmbEOZi42K%2BGJAn3kCwryLywR0I2JOzng3TuB1FH5edXTQvzVE1wuRLJoxrO0f6oOGCg155lz0bSxIPiNrznSnKKBOor6owNnolQbGFVuu1PYwbndTMpWaBB7/XS2%2BG0Sw%3D';
+        params.code = 'cxKLOpJSs8OajOTXOs+ROCOQ1G8InxjrSmOQGL4lV0BeiXrgRVzb8C+q4jCNX1VI8sB1Q2hUYBBKr72hajrzHhG8tG9pegfb0MH1k2gSB3qyQCGxjoBhIRKCRCj2ziEmOm14ewVmGs2Zn4IMl2l3nXVxZ/tBznRY4FWtvkcAwfEdUG7SqSYQdol9ijNZeGvC';
         params.logtype = 'browser';
         
         // 判断uuid是否存在，如果不在则新建一个
