@@ -236,7 +236,7 @@ var _maq = _maq || [];
                 p2.triggerType = 'state_enter';
                 enterTime = new Date().getTime();
                 p2.stayTime = '';
-                p2.url = location.protocol + '\\\\' + location.host + arr[1];
+                p2.url = location.protocol + '//' + location.host + arr[1];
                 
                 _send(_serilize(p2));
             default:
