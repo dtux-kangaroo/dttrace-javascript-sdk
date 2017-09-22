@@ -222,6 +222,7 @@ var _maq = _maq || [];
     }
     // 触发事件请求
     _maq.trigger = function (arr) {
+		debugger;
         switch (arr[0]) {
             case '_trackEvent':
                 params.triggerType = 'action';
@@ -231,12 +232,14 @@ var _maq = _maq || [];
                 _send(_serilize(p1));
                 break;
             case '_pageview':
+				debugger;
                 var p2 = params;
                 // params.triggerType = 'pageview';
                 p2.triggerType = 'state_enter';
                 enterTime = new Date().getTime();
                 p2.stayTime = '';
                 p2.url = location.protocol + '//' + location.host + arr[1];
+				p2.referrer = window.location.href;
                 
                 _send(_serilize(p2));
             default:
@@ -350,43 +353,43 @@ var _maq = _maq || [];
     });
     
     // 单页应用使用history模式的情况下需要自定义pushstate和replacestate事件
-    (function(history){
-        var pushState = history.pushState;
-        var replaceState = history.replaceState;
-        history.pushState = function(state) {
-            if (typeof history.onpushstate == "function") {
-                history.onpushstate({state: state,url:window.location.href});
-            }
+    // (function(history){
+    //     var pushState = history.pushState;
+    //     var replaceState = history.replaceState;
+    //     history.pushState = function(state) {
+    //         if (typeof history.onpushstate == "function") {
+    //             history.onpushstate({state: state,url:window.location.href});
+    //         }
             
-            return pushState.apply(history, arguments);
-        }
-        history.replaceState = function(state) {
-            if (typeof history.onreplacestate == "function") {
-                history.onreplacestate({state: state,url:window.location.href});
-            }
+    //         return pushState.apply(history, arguments);
+    //     }
+    //     history.replaceState = function(state) {
+    //         if (typeof history.onreplacestate == "function") {
+    //             history.onreplacestate({state: state,url:window.location.href});
+    //         }
             
-            return replaceState.apply(history, arguments);
-        }
-    })(window.history);
+    //         return replaceState.apply(history, arguments);
+    //     }
+    // })(window.history);
 	// 监听浏览器前进后退行为，发送leave请求，更新referrer
-	_addEvent(window,'popstate',function(e){
-		_sendOnLeave('state_leave');
-		params.referrer = params.url;
-		enterTime = new Date().getTime();
-	})
+	// _addEvent(window,'popstate',function(e){
+	// 	_sendOnLeave('state_leave');
+	// 	params.referrer = params.url;
+	// 	enterTime = new Date().getTime();
+	// })
     // history api事件监听
-    _addEvent(history,'pushstate',function(e){
-        _sendOnLeave('state_leave');
+    // _addEvent(history,'pushstate',function(e){
+    //     _sendOnLeave('state_leave');
         
-        params.referrer = e.url;
-        enterTime = new Date().getTime();
-    });
-    _addEvent(history,'replacestate',function(e){
-            _sendOnLeave('state_leave')
+    //     params.referrer = e.url;
+    //     enterTime = new Date().getTime();
+    // });
+    // _addEvent(history,'replacestate',function(e){
+    //         _sendOnLeave('state_leave')
             
-            params.referrer = e.url;
-            enterTime = new Date().getTime();
-    });
+    //         params.referrer = e.url;
+    //         enterTime = new Date().getTime();
+    // });
 
     function _addEvent(element, evType, fn, useCapture) {
         if (element.addEventListener) {
