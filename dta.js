@@ -262,7 +262,7 @@ var _maq = _maq || [];
     function _isNewSession() {
         var referrer = document.referrer
 
-        var domain = document.domain;
+        var domain = document.domain.split('.').slice(-2).join('.');
         if (referrer != '') {
             var referrer_host = document.referrer.split('/')[2];
             if (referrer_host.indexOf(domain) > -1) {
