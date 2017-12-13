@@ -222,7 +222,7 @@ var _maq = _maq || [];
     }
     // 触发事件请求
     _maq.trigger = function (arr) {
-		debugger;
+		// debugger;
         switch (arr[0]) {
             case '_trackEvent':
                 params.triggerType = 'action';
@@ -232,14 +232,14 @@ var _maq = _maq || [];
                 _send(_serilize(p1));
                 break;
             case '_pageview':
-				debugger;
+				// debugger;
                 var p2 = params;
-                // params.triggerType = 'pageview';
                 p2.triggerType = 'state_enter';
                 enterTime = new Date().getTime();
                 p2.stayTime = '';
+                p2.referrer = p2.url;
                 p2.url = location.protocol + '//' + location.host + arr[1];
-				p2.referrer = window.location.href;
+				// p2.referrer = window.location.href;
                 
                 _send(_serilize(p2));
             default:
@@ -341,16 +341,16 @@ var _maq = _maq || [];
         }, false);
     }
     // 单页应用hash模式下监听事件
-    _addEvent(window,'hashchange',function(e){
-        if(e.oldURL != e.newURL){
-            _sendOnLeave('state_leave');
-            params.triggerType = 'state_enter';
-            params.url = e.newURL;
-            params.referrer = e.oldURL;
-            enterTime = new Date().getTime();
-            _send(_serilize(params));
-        }
-    });
+    // _addEvent(window,'hashchange',function(e){
+    //     if(e.oldURL != e.newURL){
+    //         _sendOnLeave('state_leave');
+    //         params.triggerType = 'state_enter';
+    //         params.url = e.newURL;
+    //         params.referrer = e.oldURL;
+    //         enterTime = new Date().getTime();
+    //         _send(_serilize(params));
+    //     }
+    // });
     
     // 单页应用使用history模式的情况下需要自定义pushstate和replacestate事件
     // (function(history){
@@ -373,14 +373,19 @@ var _maq = _maq || [];
     // })(window.history);
 	// 监听浏览器前进后退行为，发送leave请求，更新referrer
 	// _addEvent(window,'popstate',function(e){
-	// 	_sendOnLeave('state_leave');
+    //     // _sendOnLeave('state_leave');
+    //     debugger
 	// 	params.referrer = params.url;
 	// 	enterTime = new Date().getTime();
-	// })
+    // })
+    // window.onpopstate = function(e){
+    //     debugger;
+
+    // }
     // history api事件监听
     // _addEvent(history,'pushstate',function(e){
-    //     _sendOnLeave('state_leave');
-        
+    //     // _sendOnLeave('state_leave');
+    //     debugger;
     //     params.referrer = e.url;
     //     enterTime = new Date().getTime();
     // });
