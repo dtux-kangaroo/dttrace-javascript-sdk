@@ -239,11 +239,17 @@ var _maq = _maq || [];
                 p2.stayTime = '';
                 p2.referrer = p2.url;
                 p2.url = location.protocol + '//' + location.host + arr[1];
+                // arr[2]?params.pageid = arr[2]:delete params.pageid;
 				// p2.referrer = window.location.href;
-                
                 _send(_serilize(p2));
             default:
                 break;
+        }
+    }
+    // 修改设置全局参数
+    _maq.modifyCustomVar = function(obj){
+        for(var i in obj){
+            params[i] = obj[i];
         }
     }
     //encode方法
