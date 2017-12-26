@@ -292,7 +292,14 @@ var _maq = _maq || [];
             if (args != '') {
                 args += '&';
             }
-			i=='code'?args+=i+'='+_encode(params[i]):args+=i+'='+params[i];
+			switch(i){
+				case 'url':
+				case 'referrer':
+					args+=i+'='+_encode(params[i]);
+					break;
+				default:
+					args+=i+'='+params[i];
+			}
             //args += i + '=' + params[i];
         }
         return args;
