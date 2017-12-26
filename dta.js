@@ -189,9 +189,10 @@ var _maq = _maq || [];
         //Document对象数据
         if (document) {
             // params.domain = document.domain || '';
-            params.url = _decode(document.URL) || '';
+            //params.url = _decode(document.URL) || '';
+            params.url = document.URL || '';
             params.title = document.title || '';
-            params.referrer = _decode(document.referrer) || '';
+            params.referrer = document.referrer || '';
         }
         //Window对象数据
         if (window && window.screen) {
@@ -291,7 +292,7 @@ var _maq = _maq || [];
             if (args != '') {
                 args += '&';
             }
-            args += i + '=' + _encode(params[i]);
+            args += i + '=' + params[i];
         }
         return args;
     }
