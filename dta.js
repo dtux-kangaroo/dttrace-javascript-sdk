@@ -292,7 +292,8 @@ var _maq = _maq || [];
             if (args != '') {
                 args += '&';
             }
-            args += i + '=' + params[i];
+			i=='code'?args+=i+'='+_encode(params[i]):args+=i+'='+params[i];
+            //args += i + '=' + params[i];
         }
         return args;
     }
