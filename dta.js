@@ -293,8 +293,7 @@ var _maq = _maq || [];
                 args += '&';
             }
 			switch(i){
-				case 'url':
-				case 'referrer':
+				case 'code':
 					args+=i+'='+_encode(params[i]);
 					break;
 				default:
