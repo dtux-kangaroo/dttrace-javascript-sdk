@@ -166,6 +166,7 @@ var _maq = _maq || [];
     };
 
     function _init() {
+        _bind();
         // 判断token是否存在，如果不在则结束
         params.code = 'cxKLOpJSs8OajOTXOs+ROCOQ1G8InxjrSmOQGL4lV0BeiXrgRVzb8C+q4jCNX1VI8sB1Q2hUYBBKr72hajrzHhG8tG9pegfb0MH1k2gSB3qyQCGxjoBhIRKCRCj2ziEmOm14ewVmGs2Zn4IMl2l3nXVxZ/tBznRY4FWtvkcAwfEdUG7SqSYQdol9ijNZeGvC';
         params.logtype = 'browser';
@@ -193,6 +194,7 @@ var _maq = _maq || [];
             params.url = document.URL || '';
             params.title = document.title || '';
             params.referrer = document.referrer || '';
+            params.cookie=JSON.stringify(document.cookie)||'';
         }
         //Window对象数据
         if (window && window.screen) {
@@ -426,5 +428,20 @@ var _maq = _maq || [];
         var u = navigator.userAgent;
         return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
     }
+
+    function _bind(){
+        var element_body=document.getElementsByTagName('body')[0];
+        _addEvent(element_body,'click',function(event){
+            var e =window.event||event;
+            if(e.target.className.indexOf('dta')>-1){
+                var type=e.target.dataset.dtaType?e.target.dataset.dtaType:"_trackEvent";
+                var message=e.target.dataset.message;
+                if(message){
+                    _maq.trigger([type,message]);
+                }
+            }
+        })
+    }
+    
     _sendOnLoad();
 })();
