@@ -1,6 +1,6 @@
 # JS SDK说明
 
-登录云日志，选择日志上传-&gt;流量统计-&gt;js统计后，即可看到js sdk代码生成页面，输入应用名和Tag，点击生成代码即可，应用名和Tag可在搜索中用于日志筛选的条件。
+登录云日志，选择日志上传-&gt流量统计-&gtjs统计后，即可看到js sdk代码生成页面，输入应用名和Tag，点击生成代码即可，应用名和Tag可在搜索中用于日志筛选的条件。
 
 ![](/assets/js_sdk_upload.png)
 
@@ -52,13 +52,13 @@ _maq[['_setAccount','username'],['_setCustomVar','param name','param value'],['_
 
 ```
 <script>
-var _maq = _maq || [];
-_maq = [['_setAccount','testuser'],['_setCustomVar','page','home']];
+var _maq = _maq || []
+_maq = [['_setAccount','testuser'],['_setCustomVar','page','home']]
 (function() {
-var ma = document.createElement('script'); ma.type = 'text/javascript'; ma.async = true;
-ma.src = "https://logapi.dtstack.com/dta.js?t=lOZVMROz1R1luHyRU9AKNO6aOR8BHV6WhHc6sI3XJaz6IXQ0qyxg1KAsDvLeALZDNwSV4ozGtSXWS1rYWzk90LKkMIrqtJ9rZLdBJQZohiVOgHVhO3JJ45SvYL0z5svjci2MNWGk7MqRxmQ80Duz0A%3D%3D";
-var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ma, s);
-})();
+var ma = document.createElement('script') ma.type = 'text/javascript' ma.async = true
+ma.src = "https://logapi.dtstack.com/dta.js?t=lOZVMROz1R1luHyRU9AKNO6aOR8BHV6WhHc6sI3XJaz6IXQ0qyxg1KAsDvLeALZDNwSV4ozGtSXWS1rYWzk90LKkMIrqtJ9rZLdBJQZohiVOgHVhO3JJ45SvYL0z5svjci2MNWGk7MqRxmQ80Duz0A%3D%3D"
+var s = document.getElementsByTagName('script')[0] s.parentNode.insertBefore(ma, s)
+})()
 </script>
 ```
 
@@ -90,7 +90,7 @@ window._maq.modifyCustomVar({
     key1:value1,
     key2:value2,
     ...
-});
+})
 ```
 
 自定义参数修改最好放到路由跳转逻辑触发请求之前设置，这样可以保证数据的准确性：
@@ -102,7 +102,7 @@ if(window._maq){
         key1:value1,
         key2:value2,
         ...
-    });
+    })
     window._maq.trigger(['_pageview','跳转地址'])
 }
 ```
