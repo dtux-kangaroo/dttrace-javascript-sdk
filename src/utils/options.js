@@ -38,6 +38,10 @@ export const getDefaultOptions=()=>{
 }
 
 export const setDefaultOptions=(options)=>{
+  if(options.params){
+    setDefaultParams(options.params);
+    delete options.params;
+  }
   DEFALUT_OPTIONS=Object.assign(DEFALUT_OPTIONS,options);
   return DEFALUT_OPTIONS;
 }
