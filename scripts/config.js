@@ -10,7 +10,7 @@ const banner =
   ' */';
 const builds={
   "dev":{
-    dest:path.resolve(__dirname,'../lib/dta-dev.js'),
+    dest:path.resolve(__dirname,'../test/common-html/dta-dev.js'),
     format:'umd',
     banner
   },
@@ -29,7 +29,7 @@ const builds={
   }
 }
 function getConfig(name){
-  const opts = builds[name]
+  const opts = builds[name];
   const config={
     input:path.resolve(__dirname,'../src/index.js'),
     output:{
@@ -48,5 +48,5 @@ function getConfig(name){
 if(process.env.TARGET){
   module.exports=getConfig(process.env.TARGET);
 }else{
-  module.exports.getAllBuilds=()=>Object.keys(builds).map(getConfig)
+  module.exports.getAllBuilds=()=>Object.keys(builds).map(getConfig);
 }
