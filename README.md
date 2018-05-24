@@ -32,20 +32,20 @@ Dta.options.setDefaultOptions({
 ### 第二步 埋点
 目前支持以下四种方式进行埋点：
 
-第一种：html标签自定义属性
+#### 第一种：html标签自定义属性
 
 所有带有**dta**这个类名的html标签，点击时都会触发埋点操作，并一并采集**data-dta-[参数名]**设置的值
 ```
 <button class="dta" data-dta-[参数名]="[对应值]"></button>
 ```
-第二种：调用Dta.launchRocket
+#### 第二种：调用Dta.launchRocket
 ```
 Dta.launchRocket();
 ```
 Dta.launchRocket接收1个参数:params(可选)
 - **params**:额外采集的数据  类型：Object
 
-第三种：利用Dta.carryRocket对方法进行改造
+#### 第三种：利用Dta.carryRocket对方法进行改造
 
 **html**
 
@@ -62,7 +62,7 @@ btn.onclick=Dta.carryRocket(function(e){
 ```
 所有经过Dta.carryRocket的方法都会唤起数据采集
 
-第四种：利用@DtaRocket装饰器改造方法
+#### 第四种：利用@DtaRocket装饰器改造方法
 ```
 import {PureComponent} from 'react';
 import {DtaRocket} from 
