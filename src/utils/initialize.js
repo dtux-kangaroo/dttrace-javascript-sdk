@@ -24,7 +24,7 @@ export default () => {
     const element_body = document.getElementsByTagName('body')[0];
     addEventListener(element_body, 'click', function (event) {
       const e = window.event || event;
-      if (e.target.className.indexOf('dta') > -1) {
+      if (e.target.className.indexOf('Dta') > -1) {
         const params = {};
         Object.keys(e.target.dataset).filter(key => {
           if (key.indexOf("dta") > -1) {
