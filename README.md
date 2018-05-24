@@ -26,15 +26,15 @@ Dta.options.setDefaultOptions({
   }
 });
 ```
-- **url**:上传服务器的地址，需要以get接收
-- **params**:这里配置的参数，每次数据采集都会带上
+- **url**:上传服务器的地址，需要以get接收
+- **params**:这里配置的参数，每次数据采集都会带上
 
 ### 第二步 埋点
 目前支持以下四种方式进行埋点：
 
 第一种：html标签自定义属性
 
-所有带有**dta**这个类名的html标签，点击时都会触发埋点操作，并一并采集**data-dta-[参数名]**设置的值
+所有带有**dta**这个类名的html标签，点击时都会触发埋点操作，并一并采集**data-dta-[参数名]**设置的值
 ```
 <button class="dta" data-dta-[参数名]="[对应值]"></button>
 ```
@@ -60,7 +60,7 @@ btn.onclick=Dta.carryRocket(function(e){
     console.log(e.target);
 });
 ```
-所有经过Dta.carryRocket的方法都会唤起数据采集
+所有经过Dta.carryRocket的方法都会唤起数据采集
 
 第四种：利用@DtaRocket装饰器改造方法
 ```
@@ -104,8 +104,8 @@ js代码中获取的用户客户端信息
 ## 额外API
 | 字段 | 参数 | 描述 |
 | :--- | :--- |:--- |
-| Dta.option.getDefaultOptions|无 | 获取当前的全局配置|
-| Dta.option.setDefaultOptions|Object | 修改当前的全局配置|
+| Dta.option.getDefaultOptions|无 | 获取当前的全局配置|
+| Dta.option.setDefaultOptions|Object | 修改当前的全局配置|
 | Dta.option.getDefaultParams|无 | 获取当前默认的采集参数|
 | Dta.option.setDefaultParams|Object | 修改当前默认的采集参数|
 | Dta.cookie.get|string | 获取cookie中指定的值|
