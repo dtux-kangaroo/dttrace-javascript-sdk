@@ -5,9 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
+  <script src="dta-dev.js"></script>
 </head>
 <body>
-  
+  <button id="btn">点击我</button>
+  <button id="btn2" class="dta" data-dta-type="action" data-dta-message="啦啦啦" >快来点击我</button>
 </body>
-<script src="../../lib/dta.js"></script>
+<script>
+  Dta.options.setDefaultOptions({
+    url:'http://recv.log.dtstack.com/dtas',
+    params:{
+      "test":"changqing"
+    }
+  });
+
+  var btn2=document.getElementById("btn2")  
+  btn2.onclick=function(e){
+    console.log(e.target)
+  }
+
+</script>
 </html>

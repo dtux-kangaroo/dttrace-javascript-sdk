@@ -1,4 +1,4 @@
-
+import uuid from './uuid';
 
 const windowInfo=window && window.screen&&{
   "sh":window.screen.height || 0,
@@ -17,11 +17,15 @@ const documentInfo=document&&{
   "cookie":JSON.stringify(document.cookie)||''
 }
 
-let DEFALUT_PARAMS=Object.assign({},windowInfo,navigatorInfo,documentInfo);
+const extraInfo={
+  "uuid":uuid(),
+}
+
+let DEFALUT_PARAMS=Object.assign({},windowInfo,navigatorInfo,documentInfo,extraInfo);
 
 
 let DEFALUT_OPTIONS={
-  url:'http://recv.log.dtstack.com/dtas'
+  url:''
 }
 
 export const getDefaultParams=()=>{

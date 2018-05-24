@@ -13,8 +13,16 @@ const carryRocket=(fun,params)=>{
     current++
   }
   return (...argsArray)=>{
-    send(params)
     fun(...argsArray)
+    send(params)    
+  }
+}
+
+//DtaRocket注解
+function DtaRocket(params){
+  return function(target,name,descriptor){
+    target[name]=carryRocket(target[name],params);    
+    return target;
   }
 }
 //初始化
@@ -24,5 +32,6 @@ export default {
   options,
   uuid,
   launchRocket:send,
-  carryRocket
+  carryRocket,
+  DtaRocket
 }

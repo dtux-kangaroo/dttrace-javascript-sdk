@@ -35,12 +35,16 @@ const serilize = (params) => {
   }
   return args;
 }
-const send = (params,options) => {
-  const newOptions= Object.assign(getDefaultOptions(),options);
+const send = (params) => {
+  const options=getDefaultOptions();
   const newParams= Object.assign(getDefaultParams(),params);
-  let args = serilize(newParams);
-  args += '&timestamp=' + toISOString();
-  const img = new Image(1, 1);
-  img.src = newOptions.url+'?' + args;
+  if(options.url){
+    let args = serilize(newParams);
+    args += '&timestamp=' + toISOString();
+    const img = new Image(1, 1);
+    img.src = options.url+'?' + args;
+  }else{
+    console.error("未调用Dta.options.setDefaultOptions设置url参数");
+  }
 }
 export default send
