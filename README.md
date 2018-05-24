@@ -6,7 +6,7 @@
 
 
 ## 安装
-### script引入
+### script引入
 ```
 <script src=".../dta.min.js"></script>
 ```
