@@ -37,7 +37,7 @@ const serilize = (params) => {
 }
 const send = (params) => {
   const options=getDefaultOptions();
-  const newParams= Object.assign(getDefaultParams(),params);
+  const newParams= Object.assign({},getDefaultParams(),params);
   if(options.url){
     let args = serilize(newParams);
     args += '&timestamp=' + toISOString();
