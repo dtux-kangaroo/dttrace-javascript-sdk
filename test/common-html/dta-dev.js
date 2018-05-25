@@ -123,7 +123,7 @@
       "url" : document.URL || '',
       "title" : document.title || '',
       "referrer":document.referrer || '',
-      "cookie":JSON.stringify(document.cookie)||''
+      "cookie":document.cookie||''
     }
   };
 
@@ -148,6 +148,12 @@
     return DEFALUT_PARAMS;  
   };
 
+  var removeDefaultParams=function (name){
+    var value=DEFALUT_PARAMS[name];
+    delete DEFALUT_PARAMS[name];
+    return value;
+  };
+
   var getDefaultOptions=function (){
     return DEFALUT_OPTIONS;
   };
@@ -164,6 +170,7 @@
   var options = /*#__PURE__*/Object.freeze({
     getDefaultParams: getDefaultParams,
     setDefaultParams: setDefaultParams,
+    removeDefaultParams: removeDefaultParams,
     getDefaultOptions: getDefaultOptions,
     setDefaultOptions: setDefaultOptions
   });
@@ -194,16 +201,11 @@
       if (args != '') {
         args += '&';
       }
-      switch (i) {
-        case 'code':
-          args += i + '=' + _encode(params[i]);
-          break
-        default:
-          args += i + '=' + params[i];
-      }
+      args += i + '=' + encodeURIComponent(params[i]);
     }
     return args;
   };
+  //采集数据
   var send = function (params) {
     var options=getDefaultOptions();
     var newParams= Object.assign({},getDefaultParams(),params);
@@ -267,12 +269,6 @@
       element['on' + evType] = fn; //DOM 0
     }
   };
-  //判断是否是ios
-   var isIos=function (){
-    var u = navigator.userAgent;
-    return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-  };
-
   function initialize () {
     ready$1(function (){
       var enterTime=new Date().getTime();
@@ -289,24 +285,6 @@
           send(params);
         }
       },false);
-    
-      if(isIos()){
-        addEventListener(window,'pagehide',function(){
-          var leaveTime = new Date().getTime();
-          var params={};
-          params.triggerType = 'leave';
-          params.stayTime = leaveTime - enterTime;
-          send(params);
-        });
-      }else{
-        addEventListener(window,'beforeunload',function(){
-          var leaveTime = new Date().getTime();
-          var params={};
-          params.triggerType = 'leave';
-          params.stayTime = leaveTime - enterTime;
-          send(params);
-        });
-      }
     });
   }
 

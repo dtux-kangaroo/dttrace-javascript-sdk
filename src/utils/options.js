@@ -45,6 +45,12 @@ export const setDefaultParams=(extraParams)=>{
   return DEFALUT_PARAMS;  
 }
 
+export const removeDefaultParams=(name)=>{
+  const value=DEFALUT_PARAMS[name];
+  delete DEFALUT_PARAMS[name];
+  return value;
+}
+
 export const getDefaultOptions=()=>{
   return DEFALUT_OPTIONS;
 }
