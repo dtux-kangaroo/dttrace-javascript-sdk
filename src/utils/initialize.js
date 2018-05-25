@@ -1,5 +1,6 @@
 import send from './send';
 import ready from './ready';
+import options from './options';
 // 添加监听事件
 const addEventListener = (element, evType, fn, useCapture) => {
   if (element.addEventListener) {
@@ -12,15 +13,9 @@ const addEventListener = (element, evType, fn, useCapture) => {
     element['on' + evType] = fn; //DOM 0
   }
 }
-//判断是否是ios
- const isIos=()=>{
-  const u = navigator.userAgent;
-  return !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
-}
-
 export default () => {
   ready(()=>{
-    const enterTime=new Date().getTime();
+    let enterTime=new Date().getTime();
     const element_body = document.getElementsByTagName('body')[0];
     addEventListener(element_body, 'click', function (event) {
       const e = window.event || event;
@@ -34,23 +29,5 @@ export default () => {
         send(params);
       }
     },false);
-  
-    if(isIos()){
-      addEventListener(window,'pagehide',function(){
-        const leaveTime = new Date().getTime();
-        const params={};
-        params.triggerType = 'leave';
-        params.stayTime = leaveTime - enterTime;
-        send(params);
-      });
-    }else{
-      addEventListener(window,'beforeunload',function(){
-        const leaveTime = new Date().getTime();
-        const params={};
-        params.triggerType = 'leave';
-        params.stayTime = leaveTime - enterTime;
-        send(params);
-      });
-    }
   })
 }
