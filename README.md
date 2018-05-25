@@ -108,6 +108,7 @@ js代码中获取的用户客户端信息
 | Dta.option.setDefaultOptions|Object | 修改当前的全局配置|
 | Dta.option.getDefaultParams|无 | 获取当前默认的采集参数|
 | Dta.option.setDefaultParams|Object | 修改当前默认的采集参数|
+| Dta.option.removeDefaultParams|string | 删除当前默认的采集参数|
 | Dta.cookie.get|string | 获取cookie中指定的值|
 | Dta.cookie.set| string,string| 设置cookie的key-value|
 | Dta.cookie.remove| string,string| 移除cookie中指定的值|
