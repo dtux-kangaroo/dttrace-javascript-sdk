@@ -20,7 +20,7 @@ const getDocumentInfo=()=>{
     "url" : document.URL || '',
     "title" : document.title || '',
     "referrer":document.referrer || '',
-    "cookie":JSON.stringify(document.cookie)||''
+    "cookie":document.cookie||''
   }
 }
 

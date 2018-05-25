@@ -25,16 +25,11 @@ const serilize = (params) => {
     if (args != '') {
       args += '&';
     }
-    switch (i) {
-      case 'code':
-        args += i + '=' + _encode(params[i]);
-        break
-      default:
-        args += i + '=' + params[i];
-    }
+    args += i + '=' + encodeURIComponent(params[i]);
   }
   return args;
 }
+//采集数据
 const send = (params) => {
   const options=getDefaultOptions();
   const newParams= Object.assign({},getDefaultParams(),params);
