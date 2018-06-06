@@ -23,7 +23,7 @@ export default () => {
         const params = {};
         Object.keys(e.target.dataset).filter(key => {
           if (key.indexOf("dta") > -1) {
-            params[key.substring(3).toLocaleLowerCase()] = e.target.dataset[key]
+            params[key.substring(3).charAt(0).toLocaleLowerCase()+key.substring(4)] = e.target.dataset[key]
           }
         });
         send(params);
