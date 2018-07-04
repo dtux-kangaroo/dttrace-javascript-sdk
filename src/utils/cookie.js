@@ -1,5 +1,5 @@
 export const get = (name) => {
-  const nameEQ = name + "=";
+  const nameEQ = name + '=';
   const ca = document.cookie.split(';');
   for (let i = 0; i < ca.length; i++) {
     let c = ca[i];
@@ -8,24 +8,24 @@ export const get = (name) => {
   }
   return null;
 }
-export const set= (name, value, days, cross_subdomain, is_secure) => {
-  let cdomain = "",
-    expires = "",
-    secure = "";
+export const set= (name, value, time, cross_subdomain, is_secure) => {
+  let cdomain = '',
+    expires = '',
+    secure = '';
   if (cross_subdomain) {
     const matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
       domain = matches ? matches[0] : '';
-    cdomain = ((domain) ? "; domain=." + domain : "");
+    cdomain = ((domain) ? '; domain=.' + domain : '');
   }
-  if (days) {
+  if (time) {
     const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toGMTString();
+    date.setTime(date.getTime() + time);
+    expires = '; expires=' + date.toGMTString();
   }
   if (is_secure) {
-    secure = "; secure";
+    secure = '; secure';
   }
-  document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/" + cdomain + secure;
+  document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
 }
 
 export const remove=(name, cross_subdomain) => {

@@ -1,37 +1,95 @@
-import * as cookie from './utils/cookie'
-import * as options from './utils/options'
-import uuid from './utils/uuid'
-import send from './utils/send'
-import initialize from './utils/initialize'
+import * as cookie from './utils/cookie';
+import {
+  setDefaultParams,
+  removeDefaultParams,
+  getDefaultParams,
+  setDefaultOptions
+} from './utils/options';
+import uuid from './utils/uuid';
+import send from './utils/send';
+import initialize from './utils/initialize';
+import {
+  eventInfoAnalyze
+} from './utils/event';
 //给事件进行埋点
-const carryRocket=(fun,params)=>{
-  let total=fun.length
-  let current=0
-  const argsArray=[]
-  while(current<total){
-    argsArray.push("params"+current)
+const carryRocket = (fun, params) => {
+  let total = fun.length
+  let current = 0
+  const argsArray = []
+  while (current < total) {
+    argsArray.push('arg' + current)
     current++
   }
-  return (...argsArray)=>{
+  return (...argsArray) => {
+    const final_event = window.event ? window.event : arg0;
     fun(...argsArray)
-    send(params)    
+    send(Object.assign({}, eventInfoAnalyze(final_event), params))
   }
 }
 
 //DtaRocket注解
-function DtaRocket(params){
-  return function(target,name,descriptor){
-    target[name]=carryRocket(target[name],params);    
+function DtaRocket(params) {
+  return function (target, name, descriptor) {
+    target[name] = carryRocket(target[name], params);
     return target;
   }
 }
-//初始化
-initialize()
+
+
+const init = (args) => {
+  const {
+    appKey,
+    appType,
+    token,
+    session_expiration_time,
+    params
+  } = args;
+
+  if (checkArgsIntegrity(args).length > 0) {
+    if(session_expiration_time) setDefaultOptions({session_expiration_time});
+    setDefaultParams(Object.assign({},{
+      $app_key:appKey,
+      $app_type:appType,
+      $token:token
+    },params));
+    //初始化
+    initialize();
+  } else {
+    console.error('Dttrace initialize unsuccessfully,some required params no exist!');
+    checkArgsIntegrity(args).forEach((item) => {
+      console.error(item);
+    });
+  }
+
+  function checkArgsIntegrity(args) {
+    const {
+      ppKey,
+      appType,
+      token
+    } = args;
+    const errorList = [];
+    if (!appKey) errorList.push('appKey no exist');
+    if (!appType) errorList.push('appType no exist');
+    if (!token) errorList.push('token no exist');
+    return errorList;
+  }
+}
+
+const launchRocket = (params,event) => {
+  const final_params= params;
+  if(event){
+    Object.assign(final_params,eventInfoAnalyze(event));
+  }
+  send(final_params);
+}
+
+
 export default {
-  cookie,
-  options,
-  uuid,
-  launchRocket:send,
+  init,
+  launchRocket,
   carryRocket,
-  DtaRocket
+  DttraceRocket,
+  setDefaultParams,
+  removeDefaultParams,
+  getDefaultParams
 }

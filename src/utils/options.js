@@ -1,42 +1,66 @@
 import uuid from './uuid';
+import * as cookie from './cookie';
+import {getSessionId} from './session';
 
-const getWindowInfo=()=>{
-  return window && window.screen&&{
-    "sh":window.screen.height || 0,
-    "sw":window.screen.width || 0,
-    "cd":window.screen.colorDepth || 0,
+const {screen,location,navigator}=window;
+
+const getReferrerHost=(referrer)=>{
+  const REG_TEST_REFERRER_LEGALITY=/:\/\/.*\//
+  if(REG_TEST_REFERRER_LEGALITY.test(referrer)){
+    return referrer.match(REG_TEST_REFERRER_LEGALITY)[0].replace(/(:\/\/)|(\/)/g,'')
+  }
+}
+
+
+const getScreenInfo=()=>{
+  return screen&&{
+    '$screen_height':screen.height,
+    '$screen_width':screen.width,
+    '$screen_colordepth':screen.colorDepth
+  }
+}
+
+const getLocationInfo=()=>{
+  return location&&{
+    '$url':location.href,
+    '$url_path':location.pathname
   }
 }
 
 const getNavigatorInfo=()=>{
   return navigator&&{
-    "lang":navigator.language || '',
-    "platform":navigator.platform || ''
+    '$lang':navigator.language,
+    '$user_agent':navigator.userAgent
   }
 }
 
 const getDocumentInfo=()=>{
   return document&&{
-    "url" : document.URL || '',
-    "title" : document.title || '',
-    "referrer":document.referrer || '',
-    "cookie":document.cookie||''
+    '$title' : document.title,
+    '$referrer':document.referrer,
+    '$referrer_host':getReferrerHost(document.referrer),
+    '$cookie':document.cookie
   }
 }
 
-const extraInfo={
-  "uuid":uuid(),
+const getAllInfo=()=>{
+  return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
+    '$sessionId':getSessionId()
+  });
 }
 
-let DEFALUT_PARAMS=Object.assign({},getWindowInfo(),getNavigatorInfo(),getDocumentInfo(),extraInfo);
+let DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
+  '$DTTID':uuid()
+});
 
 
 let DEFALUT_OPTIONS={
-  url:''
+  url:'https://recvapi.md.dtstack.com/dta',
+  session_expiration_time:30*60*1000
 }
 
 export const getDefaultParams=()=>{
-  Object.assign(DEFALUT_PARAMS,getWindowInfo(),getNavigatorInfo(),getDocumentInfo());
+  Object.assign(DEFALUT_PARAMS,getAllInfo());
   return DEFALUT_PARAMS;
 }
 
@@ -56,10 +80,6 @@ export const getDefaultOptions=()=>{
 }
 
 export const setDefaultOptions=(options)=>{
-  if(options.params){
-    setDefaultParams(options.params);
-    delete options.params;
-  }
   Object.assign(DEFALUT_OPTIONS,options);
   return DEFALUT_OPTIONS;
 }
