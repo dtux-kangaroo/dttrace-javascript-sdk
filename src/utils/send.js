@@ -13,7 +13,12 @@ const serilize = (params) => {
     if (args != '') {
       args += '&';
     }
-    args += i + '=' + encodeURIComponent(params[i]);
+
+    if(params[i]){
+      args += i + '=' + encodeURIComponent(params[i]);
+    }else{
+      continue;
+    }
   }
   return args;
 }
@@ -21,13 +26,13 @@ const serilize = (params) => {
 const send = (params) => {
   const options=getDefaultOptions();
   const newParams= Object.assign({},getDefaultParams(),params);
-  if(options.url){
+  if(options.status){
     let args = serilize(newParams);
-    args += '&timestamp=' + toISOString();
+    args += '&$timestamp=' + new Date().getTime();
     const img = new Image(1, 1);
     img.src = options.url+'?' + args;
   }else{
-    console.error('未调用Dta.options.setDefaultOptions设置url参数');
+    console.error("Dttrace not init,please excute Dttrace.init");
   }
 }
 export default send

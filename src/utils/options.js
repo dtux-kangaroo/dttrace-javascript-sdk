@@ -56,7 +56,8 @@ let DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
 
 let DEFALUT_OPTIONS={
   url:'https://recvapi.md.dtstack.com/dta',
-  session_expiration_time:30*60*1000
+  session_expiration_time:30*60*1000,
+  status:0
 }
 
 export const getDefaultParams=()=>{

@@ -1,7 +1,6 @@
 const path=require('path');
 const buble =require('rollup-plugin-buble');
 const uglify=require('rollup-plugin-uglify').uglify;
-const replace=require('rollup-plugin-replace');
 const version = process.env.VERSION || require('../package.json').version;
 const banner =
   '/*!\n' +
@@ -10,8 +9,13 @@ const banner =
   ' * Released under the MIT License.\n' +
   ' */';
 const builds={
-  "dev":{
-    dest:path.resolve(__dirname,'../test/common-html/dttrace-dev.js'),
+  "dev-common":{
+    dest:path.resolve(__dirname,'../test/common-html/dttrace.js'),
+    format:'umd',
+    banner
+  },
+  "dev-react":{
+    dest:path.resolve(__dirname,'../test/react-webpack/dttrace.js'),
     format:'umd',
     banner
   },
@@ -40,10 +44,7 @@ function getConfig(name){
       banner: opts.banner,
     },
     plugins:[
-      buble(),
-      replace({
-        window:'global'
-      })
+      buble()
     ].concat(opts.plugins||[])
   }
   return config;

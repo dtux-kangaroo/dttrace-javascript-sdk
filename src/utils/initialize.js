@@ -2,6 +2,7 @@ import send from './send';
 import ready from './ready';
 import {createSessionId} from './session';
 import {eventInfoAnalyze} from './event';
+import { setDefaultOptions } from './options';
 
 
 // 添加监听事件
@@ -25,12 +26,15 @@ export default () => {
     //监听页面进入
     const pageEnterHandler=()=>{
       send({
-        trigger_type:'enter',
+        $trigger_type:'enter',
       }); 
     }
 
-    addEventListener(window,'load',pageEnterHandler,false);
-    addEventListener(window,'pageshow',pageEnterHandler,false);
+    if('onpageshow' in window){
+      addEventListener(window,'pageshow',pageEnterHandler,false);
+    }else{
+      addEventListener(window,'load',pageEnterHandler,false);
+    }
 
   
     //代理所有className为dttrace的dom元素
@@ -52,14 +56,21 @@ export default () => {
     //监听页面离开
     const pageLeaveHandler=()=>{
       const current_time = new Date().getTime(); 
-      const stay_time = current_time - enter_time;
+      const $stay_time = current_time - enter_time;
       send({
-        trigger_type:'leave',
-        stay_time
+        $trigger_type:'leave',
+        $stay_time
       });
     }
-    addEventListener(window,'beforeunload',pageLeaveHandler,false);
-    addEventListener(window,'pagehide',pageLeaveHandler,false);
 
+    if('onpagehide' in window){
+      addEventListener(window,'pagehide',pageLeaveHandler,false);
+    }else{
+      addEventListener(window,'beforeunload',pageLeaveHandler,false);
+    } 
+
+    setDefaultOptions({
+      status:1
+    });
   });
 }

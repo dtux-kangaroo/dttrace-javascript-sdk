@@ -1,32 +1,42 @@
 /*!
- * Dta.js v1.0.0
+ * Dttrace.js v1.0.0
  * (c) 2018-2018 Rui Chengping
  * Released under the MIT License.
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Dta = factory());
+  (global.Dttrace = factory());
 }(this, (function () { 'use strict';
 
+  var get = function (name) {
+    var nameEQ = name + '=';
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') { c = c.substring(1, c.length); }
+      if (c.indexOf(nameEQ) == 0) { return decodeURIComponent(c.substring(nameEQ.length, c.length)); }
+    }
+    return null;
+  };
   var set= function (name, value, time, cross_subdomain, is_secure) {
-    var cdomain = "",
-      expires = "",
-      secure = "";
+    var cdomain = '',
+      expires = '',
+      secure = '';
     if (cross_subdomain) {
       var matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
         domain = matches ? matches[0] : '';
-      cdomain = ((domain) ? "; domain=." + domain : "");
+      cdomain = ((domain) ? '; domain=.' + domain : '');
     }
     if (time) {
       var date = new Date();
       date.setTime(date.getTime() + time);
-      expires = "; expires=" + date.toGMTString();
+      expires = '; expires=' + date.toGMTString();
     }
     if (is_secure) {
-      secure = "; secure";
+      secure = '; secure';
     }
-    document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/" + cdomain + secure;
+    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
   };
 
   var T = function () {
@@ -80,8 +90,30 @@
 
   function uuid () {
     var se = (screen.height * screen.width).toString(16);
-    return T() + "-" + R() + "-" + UA() + "-" + se + "-" + T();
+    return T() + '-' + R() + '-' + UA() + '-' + se + '-' + T();
   }
+
+  var localStorage = window.localStorage;
+
+  var createSessionId = function (){
+   
+    var ref = getDefaultOptions();
+    var session_expiration_time = ref.session_expiration_time;
+    if(document.referrer===''||document.referrer.indexOf(location.host)<0){
+      var sessionId =uuid();
+      set('DTTRACE_SESSIONID',sessionId,session_expiration_time);
+      localStorage.setItem('DTTRACE_SESSIONID',sessionId);
+    }
+  };
+
+  var getSessionId=function (){
+    if(get('DTTRACE_SESSIONID')) { return get('DTTRACE_SESSIONID'); }
+    if(localStorage.getItem('DTTRACE_SESSIONID')) { return localStorage.getItem('DTTRACE_SESSIONID'); }
+  };
+
+  var screen$1 = window.screen;
+  var location$1 = window.location;
+  var navigator$1 = window.navigator;
 
   var getReferrerHost=function (referrer){
     var REG_TEST_REFERRER_LEGALITY=/:\/\/.*\//;
@@ -92,53 +124,52 @@
 
 
   var getScreenInfo=function (){
-    return screen&&{
-      "$screen_height":screen.height,
-      "$screen_width":screen.width,
-      "$screen_colordepth":screen.colorDepth
+    return screen$1&&{
+      '$screen_height':screen$1.height,
+      '$screen_width':screen$1.width,
+      '$screen_colordepth':screen$1.colorDepth
     }
   };
 
   var getLocationInfo=function (){
-    return location&&{
-      "$url":location.href,
-      "$url_path":location.pathname
+    return location$1&&{
+      '$url':location$1.href,
+      '$url_path':location$1.pathname
     }
   };
 
   var getNavigatorInfo=function (){
-    return navigator&&{
-      "$lang":navigator.language,
-      "$user_agent":navigator.userAgent
+    return navigator$1&&{
+      '$lang':navigator$1.language,
+      '$user_agent':navigator$1.userAgent
     }
   };
 
   var getDocumentInfo=function (){
     return document&&{
-      "$title" : document.title,
-      "$referrer":document.referrer,
-      "$referrer_host":getReferrerHost(document.referrer),
-      "$cookie":document.cookie
+      '$title' : document.title,
+      '$referrer':document.referrer,
+      '$referrer_host':getReferrerHost(document.referrer),
+      '$cookie':document.cookie
     }
   };
 
   var getAllInfo=function (){
-    return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo());
+    return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
+      '$sessionId':getSessionId()
+    });
   };
 
   var DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
-    "$DTTID":uuid()
+    '$DTTID':uuid()
   });
 
 
   var DEFALUT_OPTIONS={
     url:'https://recvapi.md.dtstack.com/dta',
-    session_expiration_time:30*60*1000
+    session_expiration_time:30*60*1000,
+    status:0
   };
-
-
-
-
 
   var getDefaultParams=function (){
     Object.assign(DEFALUT_PARAMS,getAllInfo());
@@ -172,7 +203,12 @@
       if (args != '') {
         args += '&';
       }
-      args += i + '=' + encodeURIComponent(params[i]);
+
+      if(params[i]){
+        args += i + '=' + encodeURIComponent(params[i]);
+      }else{
+        continue;
+      }
     }
     return args;
   };
@@ -180,13 +216,13 @@
   var send = function (params) {
     var options=getDefaultOptions();
     var newParams= Object.assign({},getDefaultParams(),params);
-    if(options.url){
+    if(options.status){
       var args = serilize(newParams);
-      args += '&timestamp=' + toISOString();
+      args += '&$timestamp=' + new Date().getTime();
       var img = new Image(1, 1);
       img.src = options.url+'?' + args;
     }else{
-      console.error("未调用Dta.options.setDefaultOptions设置url参数");
+      console.error("Dttrace not init,please excute Dttrace.init");
     }
   };
 
@@ -194,7 +230,7 @@
   function ready(){
     var funcs=[],isReady=false;
     function handler(arg_event){
-      var e=arg_event || event;
+      var e=arg_event || window.event;
       if (isReady) { return; }
       if(e.type === 'onreadystatechange' && document.readyState !== 'complete'){
         return;
@@ -233,14 +269,14 @@
 
     var element = event.target||event.srcElement;
     return {
-        "$element_id":element.id,
-        "$element_name":element.name,
-        "$element_content":element.innerHTML,
-        "$element_class_name":element.className,
-        "$element_type":element.nodeName,
-        "$element_target_url":element.href,
-        "$screenX":event.screenX,
-        "$screenY":event.screenY
+        '$element_id':element.id,
+        '$element_name':element.name,
+        '$element_content':element.innerHTML,
+        '$element_class_name':element.className,
+        '$element_type':element.nodeName,
+        '$element_target_url':element.href,
+        '$screenX':event.screenX,
+        '$screenY':event.screenY
     }
 
   };
@@ -260,34 +296,32 @@
 
   function initialize () {
     ready$1(function (){
-    var ref = getDefaultOptions();
-    var session_expiration_time = ref.session_expiration_time;
       var enter_time=new Date().getTime();
       //分配sessionId
-      if(document.referrer===''||document.referrer.indexOf(location.host)<0){
-        set('DTTRACE_SESSIONID',uuid(),session_expiration_time);
-        localStorage.setItem;
-      }
+      createSessionId();
       //监听页面进入
       var pageEnterHandler=function (){
         send({
-          trigger_type:'enter',
+          $trigger_type:'enter',
         }); 
       };
 
-      addEventListener(window,'load',pageEnterHandler,false);
-      addEventListener(window,'pageshow',pageEnterHandler,false);
+      if('onpageshow' in window){
+        addEventListener(window,'pageshow',pageEnterHandler,false);
+      }else{
+        addEventListener(window,'load',pageEnterHandler,false);
+      }
 
     
       //代理所有className为dttrace的dom元素
       var element_body = document.getElementsByTagName('body')[0];
       addEventListener(element_body, 'click',function (arg_event){
-        var final_event = event || arg_event;
+        var final_event = window.event || arg_event;
         var target_element =final_event.target||final_event.srcElement;
         if (target_element.className.indexOf('dttrace') > -1) {
           var params = {};
           Object.keys(target_element.dataset).filter(function (key) {
-            if (key.indexOf("dttrace") > -1) {
+            if (key.indexOf('dttrace') > -1) {
               params[key.substring(3).charAt(0).toLocaleLowerCase()+key.substring(4)] = target_element.dataset[key];
             }
           });
@@ -298,15 +332,22 @@
       //监听页面离开
       var pageLeaveHandler=function (){
         var current_time = new Date().getTime(); 
-        var stay_time = current_time - enter_time;
+        var $stay_time = current_time - enter_time;
         send({
-          trigger_type:'leave',
-          stay_time: stay_time
+          $trigger_type:'leave',
+          $stay_time: $stay_time
         });
       };
-      addEventListener(window,'beforeunload',pageLeaveHandler,false);
-      addEventListener(window,'pagehide',pageLeaveHandler,false);
 
+      if('onpagehide' in window){
+        addEventListener(window,'pagehide',pageLeaveHandler,false);
+      }else{
+        addEventListener(window,'beforeunload',pageLeaveHandler,false);
+      } 
+
+      setDefaultOptions({
+        status:1
+      });
     });
   }
 
@@ -317,11 +358,19 @@
       var argsArray = [], len = arguments.length;
       while ( len-- ) argsArray[ len ] = arguments[ len ];
 
-      var final_event = event ? event : arg0;
-      fun.apply(void 0, argsArray);
-      send(Object.assign({}, eventInfoAnalyze(final_event), params));
+      var final_event = window.event ? window.event : arg0;
+      var result=fun.apply(void 0, argsArray);
+      send(Object.assign({}, eventInfoAnalyze(final_event), params,result));
     }
   };
+
+  //DtaRocket注解
+  function DttraceRocket(params) {
+    return function (target, name, descriptor) {
+      target[name] = carryRocket(target[name], params);
+      return target;
+    }
+  }
 
 
   var init = function (args) {
@@ -332,6 +381,11 @@
     var params = args.params;
 
     if (checkArgsIntegrity(args).length > 0) {
+      console.error('Dttrace initialize unsuccessfully,some required params no exist!');
+      checkArgsIntegrity(args).forEach(function (item) {
+        console.error(item);
+      });
+    } else {
       if(session_expiration_time) { setDefaultOptions({session_expiration_time: session_expiration_time}); }
       setDefaultParams(Object.assign({},{
         $app_key:appKey,
@@ -340,11 +394,6 @@
       },params));
       //初始化
       initialize();
-    } else {
-      console.error("Dttrace initialize unsuccessfully,some required params no exist!");
-      checkArgsIntegrity(args).forEach(function (item) {
-        console.error(item);
-      });
     }
 
     function checkArgsIntegrity(args) {
@@ -368,7 +417,7 @@
   };
 
 
-  var index = {
+  var Dttrace={
     init: init,
     launchRocket: launchRocket,
     carryRocket: carryRocket,
@@ -376,8 +425,8 @@
     setDefaultParams: setDefaultParams,
     removeDefaultParams: removeDefaultParams,
     getDefaultParams: getDefaultParams
-  }
+  };
 
-  return index;
+  return Dttrace;
 
 })));

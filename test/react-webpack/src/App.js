@@ -1,5 +1,5 @@
 import React,{PureComponent} from 'react';
-import {cookie,uuid,DtaRocket,carryRocket,options,launchRocket} from '../../../lib/dta.js';
+import {DttraceRocket,carryRocket,launchRocket} from '../dttrace';
 
 class App extends PureComponent{
   constructor(props){

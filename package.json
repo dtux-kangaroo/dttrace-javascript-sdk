@@ -7,7 +7,8 @@
     "test": "test"
   },
   "scripts": {
-    "dev": "rollup -w -c scripts/config.js --environment TARGET:dev",
+    "dev:common": "rollup -w -c scripts/config.js --environment TARGET:dev-common",
+    "dev:react":"rollup -w -c scripts/config.js --environment TARGET:dev-react",
     "build": "node scripts/build.js",
     "react:webpack": "node test/react-webpack/dta.server.js",
     "common:html": "pushstate-server test/common-html 3000",
@@ -45,7 +46,6 @@
     "rimraf": "^2.6.2",
     "rollup": "^0.59.2",
     "rollup-plugin-buble": "^0.19.2",
-    "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-uglify": "^4.0.0",
     "webpack": "^4.8.3",
     "webpack-dev-server": "^3.1.4"

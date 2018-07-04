@@ -22,13 +22,13 @@ const carryRocket = (fun, params) => {
   }
   return (...argsArray) => {
     const final_event = window.event ? window.event : arg0;
-    fun(...argsArray)
-    send(Object.assign({}, eventInfoAnalyze(final_event), params))
+    const result=fun(...argsArray)
+    send(Object.assign({}, eventInfoAnalyze(final_event), params,result))
   }
 }
 
 //DtaRocket注解
-function DtaRocket(params) {
+function DttraceRocket(params) {
   return function (target, name, descriptor) {
     target[name] = carryRocket(target[name], params);
     return target;
@@ -46,6 +46,11 @@ const init = (args) => {
   } = args;
 
   if (checkArgsIntegrity(args).length > 0) {
+    console.error('Dttrace initialize unsuccessfully,some required params no exist!');
+    checkArgsIntegrity(args).forEach((item) => {
+      console.error(item);
+    });
+  } else {
     if(session_expiration_time) setDefaultOptions({session_expiration_time});
     setDefaultParams(Object.assign({},{
       $app_key:appKey,
@@ -54,11 +59,6 @@ const init = (args) => {
     },params));
     //初始化
     initialize();
-  } else {
-    console.error('Dttrace initialize unsuccessfully,some required params no exist!');
-    checkArgsIntegrity(args).forEach((item) => {
-      console.error(item);
-    });
   }
 
   function checkArgsIntegrity(args) {
@@ -84,7 +84,7 @@ const launchRocket = (params,event) => {
 }
 
 
-export default {
+const Dttrace={
   init,
   launchRocket,
   carryRocket,
@@ -93,3 +93,5 @@ export default {
   removeDefaultParams,
   getDefaultParams
 }
+
+export default Dttrace;
