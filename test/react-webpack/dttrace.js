@@ -98,10 +98,10 @@
   var createSessionId = function (){
    
     var ref = getDefaultOptions();
-    var session_expiration_time = ref.session_expiration_time;
+    var session_expiration = ref.session_expiration;
     if(document.referrer===''||document.referrer.indexOf(location.host)<0){
       var sessionId =uuid();
-      set('DTTRACE_SESSIONID',sessionId,session_expiration_time);
+      set('DTTRACE_SESSIONID',sessionId,session_expiration);
       localStorage.setItem('DTTRACE_SESSIONID',sessionId);
     }
   };
@@ -134,7 +134,7 @@
   var getLocationInfo=function (){
     return location$1&&{
       '$url':location$1.href,
-      '$url_path':location$1.pathname
+      '$url_path':location$1.pathname+location$1.hash
     }
   };
 
@@ -156,7 +156,7 @@
 
   var getAllInfo=function (){
     return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-      '$sessionId':getSessionId()
+      '$session_id':getSessionId()
     });
   };
 
@@ -166,8 +166,9 @@
 
 
   var DEFALUT_OPTIONS={
-    url:'https://recvapi.md.dtstack.com/dta',
-    session_expiration_time:30*60*1000
+    url:'https://recvapi.md.dtstack.com/dta/',
+    session_expiration:30*60*1000,
+    status:0
   };
 
   var getDefaultParams=function (){
@@ -202,7 +203,12 @@
       if (args != '') {
         args += '&';
       }
-      args += i + '=' + encodeURIComponent(params[i]);
+
+      if(params[i]){
+        args += i + '=' + encodeURIComponent(params[i]);
+      }else{
+        continue;
+      }
     }
     return args;
   };
@@ -210,13 +216,13 @@
   var send = function (params) {
     var options=getDefaultOptions();
     var newParams= Object.assign({},getDefaultParams(),params);
-    if(options.url){
+    if(options.status){
       var args = serilize(newParams);
-      args += '&timestamp=' + toISOString();
+      args += '&$timestamp=' + new Date().getTime();
       var img = new Image(1, 1);
       img.src = options.url+'?' + args;
     }else{
-      console.error('未调用Dta.options.setDefaultOptions设置url参数');
+      console.error("Dttrace not init,please excute Dttrace.init");
     }
   };
 
@@ -296,12 +302,15 @@
       //监听页面进入
       var pageEnterHandler=function (){
         send({
-          trigger_type:'enter',
+          $trigger_type:'enter',
         }); 
       };
 
-      addEventListener(window,'load',pageEnterHandler,false);
-      addEventListener(window,'pageshow',pageEnterHandler,false);
+      if('onpageshow' in window){
+        addEventListener(window,'pageshow',pageEnterHandler,false);
+      }else{
+        addEventListener(window,'load',pageEnterHandler,false);
+      }
 
     
       //代理所有className为dttrace的dom元素
@@ -313,51 +322,76 @@
           var params = {};
           Object.keys(target_element.dataset).filter(function (key) {
             if (key.indexOf('dttrace') > -1) {
-              params[key.substring(3).charAt(0).toLocaleLowerCase()+key.substring(4)] = target_element.dataset[key];
+              params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
             }
           });
-          send(Object.assign({},eventInfoAnalyze(final_event),params));
+          send(Object.assign({
+            $trigger_type:'action'
+          },eventInfoAnalyze(final_event),params));
         }
       },false);
 
       //监听页面离开
       var pageLeaveHandler=function (){
         var current_time = new Date().getTime(); 
-        var stay_time = current_time - enter_time;
+        var $stay_time = current_time - enter_time;
         send({
-          trigger_type:'leave',
-          stay_time: stay_time
+          $trigger_type:'leave',
+          $stay_time: $stay_time
         });
       };
-      addEventListener(window,'beforeunload',pageLeaveHandler,false);
-      addEventListener(window,'pagehide',pageLeaveHandler,false);
 
+      if('onpagehide' in window){
+        addEventListener(window,'pagehide',pageLeaveHandler,false);
+      }else{
+        addEventListener(window,'beforeunload',pageLeaveHandler,false);
+      } 
+
+      setDefaultOptions({
+        status:1
+      });
     });
   }
 
   //给事件进行埋点
-  var carryRocket = function (fun, params) {
-    var total = fun.length;
-    return function () {
-      var argsArray = [], len = arguments.length;
-      while ( len-- ) argsArray[ len ] = arguments[ len ];
+  var carryRocket =function(fun,params){
+    if(typeof fun === 'function'){
+      var total = fun.length;
+      return function(){
+        var argsArray = [], len = arguments.length;
+        while ( len-- ) argsArray[ len ] = arguments[ len ];
 
-      var final_event = window.event ? window.event : arg0;
-      fun.apply(void 0, argsArray);
-      send(Object.assign({}, eventInfoAnalyze(final_event), params));
+        var final_event = window.event ? window.event : arg0;
+        var result=fun.apply(this,argsArray);
+        send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result));
+      }
     }
+    console.error("Dttrace.carryRocket参数传递错误");
   };
 
+  //DtaRocket注解
+  function DttraceRocket(params) {
+    return function (target, name, descriptor) { 
+      target[name]=carryRocket(target[name],params);
+      return target;
+    }
+  }
 
+  // 初始化
   var init = function (args) {
     var appKey = args.appKey;
     var appType = args.appType;
     var token = args.token;
-    var session_expiration_time = args.session_expiration_time;
+    var sessionExpiration = args.sessionExpiration;
     var params = args.params;
 
     if (checkArgsIntegrity(args).length > 0) {
-      if(session_expiration_time) { setDefaultOptions({session_expiration_time: session_expiration_time}); }
+      console.error('Dttrace initialize unsuccessfully,some required params no exist!');
+      checkArgsIntegrity(args).forEach(function (item) {
+        console.error(item);
+      });
+    } else {
+      if(sessionExpiration) { setDefaultOptions({session_expiration:sessionExpiration}); }
       setDefaultParams(Object.assign({},{
         $app_key:appKey,
         $app_type:appType,
@@ -365,15 +399,10 @@
       },params));
       //初始化
       initialize();
-    } else {
-      console.error('Dttrace initialize unsuccessfully,some required params no exist!');
-      checkArgsIntegrity(args).forEach(function (item) {
-        console.error(item);
-      });
     }
 
     function checkArgsIntegrity(args) {
-      var ppKey = args.ppKey;
+      var appKey = args.appKey;
       var appType = args.appType;
       var token = args.token;
       var errorList = [];
@@ -393,16 +422,15 @@
   };
 
 
-  var index = {
+  var Dttrace={
     init: init,
     launchRocket: launchRocket,
     carryRocket: carryRocket,
     DttraceRocket: DttraceRocket,
     setDefaultParams: setDefaultParams,
-    removeDefaultParams: removeDefaultParams,
-    getDefaultParams: getDefaultParams
-  }
+    removeDefaultParams: removeDefaultParams
+  };
 
-  return index;
+  return Dttrace;
 
 })));

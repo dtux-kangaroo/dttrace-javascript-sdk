@@ -23,7 +23,7 @@ const getScreenInfo=()=>{
 const getLocationInfo=()=>{
   return location&&{
     '$url':location.href,
-    '$url_path':location.pathname
+    '$url_path':location.pathname+location.hash
   }
 }
 
@@ -45,7 +45,7 @@ const getDocumentInfo=()=>{
 
 const getAllInfo=()=>{
   return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-    '$sessionId':getSessionId()
+    '$session_id':getSessionId()
   });
 }
 
@@ -55,8 +55,8 @@ let DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
 
 
 let DEFALUT_OPTIONS={
-  url:'https://recvapi.md.dtstack.com/dta',
-  session_expiration_time:30*60*1000,
+  url:'https://recvapi.md.dtstack.com/dta/',
+  session_expiration:30*60*1000,
   status:0
 }
 

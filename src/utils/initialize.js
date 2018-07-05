@@ -46,10 +46,12 @@ export default () => {
         const params = {};
         Object.keys(target_element.dataset).filter(key => {
           if (key.indexOf('dttrace') > -1) {
-            params[key.substring(3).charAt(0).toLocaleLowerCase()+key.substring(4)] = target_element.dataset[key]
+            params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key]
           }
         });
-        send(Object.assign({},eventInfoAnalyze(final_event),params));
+        send(Object.assign({
+          $trigger_type:'action'
+        },eventInfoAnalyze(final_event),params));
       }
     },false);
 

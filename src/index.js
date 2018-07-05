@@ -12,36 +12,39 @@ import {
   eventInfoAnalyze
 } from './utils/event';
 //给事件进行埋点
-const carryRocket = (fun, params) => {
-  let total = fun.length
-  let current = 0
-  const argsArray = []
-  while (current < total) {
-    argsArray.push('arg' + current)
-    current++
+const carryRocket =function(fun,params){
+  if(typeof fun === 'function'){
+    let total = fun.length
+    let current = 0
+    const argsArray = []
+    while (current < total) {
+      argsArray.push('arg' + current)
+      current++
+    }
+    return function(...argsArray){
+      const final_event = window.event ? window.event : arg0;
+      const result=fun.apply(this,argsArray);
+      send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result))
+    }
   }
-  return (...argsArray) => {
-    const final_event = window.event ? window.event : arg0;
-    const result=fun(...argsArray)
-    send(Object.assign({}, eventInfoAnalyze(final_event), params,result))
-  }
+  console.error("Dttrace.carryRocket参数传递错误");
 }
 
 //DtaRocket注解
 function DttraceRocket(params) {
-  return function (target, name, descriptor) {
-    target[name] = carryRocket(target[name], params);
+  return (target, name, descriptor) => { 
+    target[name]=carryRocket(target[name],params);
     return target;
   }
 }
 
-
+// 初始化
 const init = (args) => {
   const {
     appKey,
     appType,
     token,
-    session_expiration_time,
+    sessionExpiration,
     params
   } = args;
 
@@ -51,7 +54,7 @@ const init = (args) => {
       console.error(item);
     });
   } else {
-    if(session_expiration_time) setDefaultOptions({session_expiration_time});
+    if(sessionExpiration) setDefaultOptions({session_expiration:sessionExpiration});
     setDefaultParams(Object.assign({},{
       $app_key:appKey,
       $app_type:appType,
@@ -63,7 +66,7 @@ const init = (args) => {
 
   function checkArgsIntegrity(args) {
     const {
-      ppKey,
+      appKey,
       appType,
       token
     } = args;
@@ -90,8 +93,7 @@ const Dttrace={
   carryRocket,
   DttraceRocket,
   setDefaultParams,
-  removeDefaultParams,
-  getDefaultParams
+  removeDefaultParams
 }
 
 export default Dttrace;

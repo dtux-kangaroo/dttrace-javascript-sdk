@@ -6,10 +6,10 @@ const {localStorage}=window;
 
 export const createSessionId = ()=>{
  
-  const {session_expiration_time} = getDefaultOptions();
+  const {session_expiration} = getDefaultOptions();
   if(document.referrer===''||document.referrer.indexOf(location.host)<0){
     const sessionId =uuid();
-    cookie.set('DTTRACE_SESSIONID',sessionId,session_expiration_time);
+    cookie.set('DTTRACE_SESSIONID',sessionId,session_expiration);
     localStorage.setItem('DTTRACE_SESSIONID',sessionId)
   }
 }
