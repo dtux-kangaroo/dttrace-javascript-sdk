@@ -4,23 +4,28 @@ const uglify=require('rollup-plugin-uglify').uglify;
 const version = process.env.VERSION || require('../package.json').version;
 const banner =
   '/*!\n' +
-  ' * Dta.js v' + version + '\n' +
+  ' * Dttrace.js v' + version + '\n' +
   ' * (c) 2018-' + new Date().getFullYear() + ' Rui Chengping\n' +
   ' * Released under the MIT License.\n' +
   ' */';
 const builds={
-  "dev":{
-    dest:path.resolve(__dirname,'../test/common-html/dta-dev.js'),
+  "dev-common":{
+    dest:path.resolve(__dirname,'../test/common-html/dttrace.js'),
+    format:'umd',
+    banner
+  },
+  "dev-react":{
+    dest:path.resolve(__dirname,'../test/react-webpack/dttrace.js'),
     format:'umd',
     banner
   },
   "production":{
-    dest:path.resolve(__dirname,'../lib/dta.js'),
+    dest:path.resolve(__dirname,'../lib/dttrace.js'),
     format:'umd',
     banner    
   },
   "production:min":{
-    dest:path.resolve(__dirname,'../lib/dta.min.js'),
+    dest:path.resolve(__dirname,'../lib/dttrace.min.js'),
     format:'umd',
     plugins:[
       uglify()
@@ -33,7 +38,7 @@ function getConfig(name){
   const config={
     input:path.resolve(__dirname,'../src/index.js'),
     output:{
-      name:'Dta',
+      name:'Dttrace',
       file: opts.dest,
       format: opts.format,
       banner: opts.banner,

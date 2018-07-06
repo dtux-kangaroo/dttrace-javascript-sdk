@@ -1,22 +1,11 @@
-import {getDefaultOptions,getDefaultParams} from './options';
+import Option from './option';
+import Param from './param';
 //格式化 1 => 01
 const pad=(number)=>{
   if (number < 10) {
       return '0' + number;
   }
   return number;
-}
-//生成时间戳
-const toISOString=()=>{
-  const date=new Date()
-  return date.getUTCFullYear() +
-      '-' + pad(date.getUTCMonth() + 1) +
-      '-' + pad(date.getUTCDate()) +
-      'T' + pad(date.getUTCHours()) +
-      ':' + pad(date.getUTCMinutes()) +
-      ':' + pad(date.getUTCSeconds()) +
-      '.' + (date.getUTCMilliseconds() / 1000).toFixed(3).slice(2, 5) +
-      'Z';
 }
 //拼接字符串
 const serilize = (params) => {
@@ -25,21 +14,26 @@ const serilize = (params) => {
     if (args != '') {
       args += '&';
     }
-    args += i + '=' + encodeURIComponent(params[i]);
+
+    if(params[i]){
+      args += i + '=' + encodeURIComponent(params[i]);
+    }else{
+      continue;
+    }
   }
   return args;
 }
 //采集数据
 const send = (params) => {
-  const options=getDefaultOptions();
-  const newParams= Object.assign({},getDefaultParams(),params);
-  if(options.url){
+  const options=Option.get();
+  const newParams=Object.assign({},Param.get(),params)
+  if(options.status){
     let args = serilize(newParams);
-    args += '&timestamp=' + toISOString();
+    args += '&$timestamp=' + new Date().getTime();
     const img = new Image(1, 1);
     img.src = options.url+'?' + args;
   }else{
-    console.error("未调用Dta.options.setDefaultOptions设置url参数");
+    console.error(new Error("Dttrace not init,please excute Dttrace.init"));
   }
 }
 export default send

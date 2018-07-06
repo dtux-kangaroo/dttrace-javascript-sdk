@@ -1,8 +1,8 @@
 //实现 $(document).ready方法的效果
 function ready(){
   let funcs=[],isReady=false;
-  function handler(event){
-    const e=event || window.event;
+  function handler(arg_event){
+    const e=arg_event || window.event;
     if (isReady) return;
     if(e.type === 'onreadystatechange' && document.readyState !== 'complete'){
       return;

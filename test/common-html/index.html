@@ -5,24 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Document</title>
-  <script src="dta-dev.js"></script>
 </head>
 <body>
+  <a class="dttrace" href="http://www.baidu.com" data-dttrace-name="测试名称" data-dttrace-id="测试id">测试属性绑定</a>
   <button id="btn">点击我</button>
   <button id="btn2" class="Dta" data-dta-type="action" data-dta-message="啦啦啦" >快来点击我</button>
-</body>
+<script src="dttrace.js"></script>
 <script>
-  Dta.options.setDefaultOptions({
-    url:'http://recv.log.dtstack.com/dtas',
-    params:{
-      "test":"changqing"
+    Dttrace.init({
+      appKey:112,
+      appType:'h5',
+      token:"3323"
+    });
+  
+    var btn1=document.getElementById("btn");
+    btn1.onclick=Dttrace.carryRocket(function(event){
+      console.log(this)
+      return {
+        abc :2
+      }
+    });
+    var btn2=document.getElementById("btn2")  
+    btn2.onclick=function(e){
+     Dttrace.launchRocket({
+       hello:123
+     },e)
     }
-  });
-
-  var btn2=document.getElementById("btn2")  
-  btn2.onclick=function(e){
-    console.log(e.target)
-  }
-
-</script>
+  </script>
+</body>
 </html>

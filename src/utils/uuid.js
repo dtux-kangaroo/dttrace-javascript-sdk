@@ -49,5 +49,5 @@ const UA =  () => {
 
 export default () => {
   const se = (screen.height * screen.width).toString(16);
-  return T() + "-" + R() + "-" + UA() + "-" + se + "-" + T();
+  return T() + '-' + R() + '-' + UA() + '-' + se + '-' + T();
 }
