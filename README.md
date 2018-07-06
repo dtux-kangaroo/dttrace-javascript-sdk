@@ -133,40 +133,6 @@ class App extends PureComponent{
   }s
 }
 ```
-<<<<<<< HEAD
-在类中被@DtaRocket装饰过的方法,被调用时都会唤起数据采集
-
-
-
-## 默认采集数据参数
-
-js代码中获取的用户客户端信息
-
-| 字段 | 描述 |
-| :--- | :--- |
-| uuid | js生成的用户id，用于统计UV |
-| url | 当前页面utl |
-| title | 当前页面title |
-| referrer | 来源页面地址 |
-| sh | 屏幕高度 |
-| sw | 屏幕宽度 |
-| cd | 屏幕色深 |
-| lang | 语言类型，中文为zh-CN |
-| platform | 操作系统 |
-
-## 额外API
-| 字段 | 参数 | 描述 |
-| :--- | :--- |:--- |
-| Dta.option.getDefaultOptions|无 | 获取当前的全局配置|
-| Dta.option.setDefaultOptions|Object | 修改当前的全局配置|
-| Dta.option.getDefaultParams|无 | 获取当前默认的采集参数|
-| Dta.option.setDefaultParams|Object | 修改当前默认的采集参数|
-| Dta.option.removeDefaultParams|string | 删除当前默认的采集参数|
-| Dta.cookie.get|string | 获取cookie中指定的值|
-| Dta.cookie.set| string,string| 设置cookie的key-value|
-| Dta.cookie.remove| string,string| 移除cookie中指定的值|
-| Dta.uuid|无| 生成uuid|
-=======
 - **extraParamsOne** &nbsp;&nbsp;&nbsp; 非必选。该事件触发之后，额外采集的数据。类型：Object
 - **extraParamsTwo** &nbsp;&nbsp;&nbsp; 非必选。return 返回的采集数据，一般用于需要事件响应函数处理过的采集数据，优先级大于extraParamsOne。类型：Object
 
@@ -302,4 +268,3 @@ js代码中获取的用户客户端信息
 ```
     Dttrace.removeDefaultParams("realName"); //获取预置采集数据"realName"对应的值
 ```
->>>>>>> dev_ruichengping_20180521
