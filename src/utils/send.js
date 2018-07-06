@@ -1,12 +1,6 @@
 import Option from './option';
 import Param from './param';
-//格式化 1 => 01
-const pad=(number)=>{
-  if (number < 10) {
-      return '0' + number;
-  }
-  return number;
-}
+
 //拼接字符串
 const serilize = (params) => {
   let args = ''
