@@ -9,8 +9,9 @@
   (global.Dttrace = factory());
 }(this, (function () { 'use strict';
 
+  var location$1 = window.location;
   var DEFALUT_OPTIONS={
-    url:'https://recvapi.md.dtstack.com/dta/',
+    url:location$1.protocol+'//recvapi.md.dtstack.com/dta/',
     session_expiration:30*60*1000,
     status:1
   };
@@ -133,7 +134,7 @@
   };
 
   var screen$1 = window.screen;
-  var location$1 = window.location;
+  var location$2 = window.location;
   var navigator$1 = window.navigator;
 
   function getReferrerHost(referrer){
@@ -152,9 +153,9 @@
   }
 
   function getLocationInfo(){
-    return location$1&&{
-      '$url':location$1.href,
-      '$url_path':location$1.pathname+location$1.hash
+    return location$2&&{
+      '$url':location$2.href,
+      '$url_path':location$2.pathname+location$2.hash
     }
   }
 
