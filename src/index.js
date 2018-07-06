@@ -1,18 +1,13 @@
-import * as cookie from './utils/cookie';
-import {
-  setDefaultParams,
-  removeDefaultParams,
-  getDefaultParams,
-  setDefaultOptions
-} from './utils/options';
-import uuid from './utils/uuid';
+import Option from './utils/option';
+import Param from './utils/param';
 import send from './utils/send';
 import initialize from './utils/initialize';
 import {
   eventInfoAnalyze
 } from './utils/event';
-//给事件进行埋点
-const carryRocket =function(fun,params){
+
+
+function carryRocket(fun,params){
   if(typeof fun === 'function'){
     let total = fun.length
     let current = 0
@@ -27,7 +22,7 @@ const carryRocket =function(fun,params){
       send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result))
     }
   }
-  console.error("Dttrace.carryRocket参数传递错误");
+  console.error(new Error("first param in Dttrace.carryRocket must be function"));
 }
 
 //DtaRocket注解
@@ -48,37 +43,30 @@ const init = (args) => {
     params
   } = args;
 
-  if (checkArgsIntegrity(args).length > 0) {
-    console.error('Dttrace initialize unsuccessfully,some required params no exist!');
-    checkArgsIntegrity(args).forEach((item) => {
-      console.error(item);
-    });
-  } else {
-    if(sessionExpiration) setDefaultOptions({session_expiration:sessionExpiration});
-    setDefaultParams(Object.assign({},{
-      $app_key:appKey,
-      $app_type:appType,
-      $token:token
-    },params));
-    //初始化
-    initialize();
+  try{
+    if (!appKey) throw new Error('appKey no exist');
+    if (!appType) throw new Error('appType no exist');
+    if (!token) throw new Error('token no exist');
+  }catch(err){
+    Option.set({status:0});
+    console.error(err);
   }
 
-  function checkArgsIntegrity(args) {
-    const {
+  if(Option.get('status')){
+    let final_option={
       appKey,
       appType,
       token
-    } = args;
-    const errorList = [];
-    if (!appKey) errorList.push('appKey no exist');
-    if (!appType) errorList.push('appType no exist');
-    if (!token) errorList.push('token no exist');
-    return errorList;
+    }
+    if(sessionExpiration) Object.assign(final_option,{session_expiration:sessionExpiration});
+    Option.set(final_option);
+    Param.set(params);
+    //初始化
+    initialize();
   }
 }
 
-const launchRocket = (params,event) => {
+function launchRocket(params,event){
   const final_params= params;
   if(event){
     Object.assign(final_params,eventInfoAnalyze(event));
@@ -92,8 +80,7 @@ const Dttrace={
   launchRocket,
   carryRocket,
   DttraceRocket,
-  setDefaultParams,
-  removeDefaultParams
+  Param
 }
 
 export default Dttrace;

@@ -1,4 +1,5 @@
-import {getDefaultOptions,getDefaultParams} from './options';
+import Option from './option';
+import Param from './param';
 //格式化 1 => 01
 const pad=(number)=>{
   if (number < 10) {
@@ -24,15 +25,15 @@ const serilize = (params) => {
 }
 //采集数据
 const send = (params) => {
-  const options=getDefaultOptions();
-  const newParams= Object.assign({},getDefaultParams(),params);
+  const options=Option.get();
+  const newParams=Object.assign({},Param.get(),params)
   if(options.status){
     let args = serilize(newParams);
     args += '&$timestamp=' + new Date().getTime();
     const img = new Image(1, 1);
     img.src = options.url+'?' + args;
   }else{
-    console.error("Dttrace not init,please excute Dttrace.init");
+    console.error(new Error("Dttrace not init,please excute Dttrace.init"));
   }
 }
 export default send

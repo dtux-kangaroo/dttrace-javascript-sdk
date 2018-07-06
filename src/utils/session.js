@@ -1,12 +1,11 @@
-import {getDefaultOptions} from  './options';
-import * as cookie from './cookie';
+import Option from  './option';
+import cookie from './cookie';
 import uuid from './uuid';
 
 const {localStorage}=window;
 
 export const createSessionId = ()=>{
- 
-  const {session_expiration} = getDefaultOptions();
+  const {session_expiration} = Option.get();
   if(document.referrer===''||document.referrer.indexOf(location.host)<0){
     const sessionId =uuid();
     cookie.set('DTTRACE_SESSIONID',sessionId,session_expiration);

@@ -2,7 +2,6 @@ import send from './send';
 import ready from './ready';
 import {createSessionId} from './session';
 import {eventInfoAnalyze} from './event';
-import { setDefaultOptions } from './options';
 
 
 // 添加监听事件
@@ -70,9 +69,5 @@ export default () => {
     }else{
       addEventListener(window,'beforeunload',pageLeaveHandler,false);
     } 
-
-    setDefaultOptions({
-      status:1
-    });
   });
 }

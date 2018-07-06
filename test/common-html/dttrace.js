@@ -9,35 +9,22 @@
   (global.Dttrace = factory());
 }(this, (function () { 'use strict';
 
-  var get = function (name) {
-    var nameEQ = name + '=';
-    var ca = document.cookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') { c = c.substring(1, c.length); }
-      if (c.indexOf(nameEQ) == 0) { return decodeURIComponent(c.substring(nameEQ.length, c.length)); }
-    }
-    return null;
+  var DEFALUT_OPTIONS={
+    url:'https://recvapi.md.dtstack.com/dta/',
+    session_expiration:30*60*1000,
+    status:1
   };
-  var set= function (name, value, time, cross_subdomain, is_secure) {
-    var cdomain = '',
-      expires = '',
-      secure = '';
-    if (cross_subdomain) {
-      var matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
-        domain = matches ? matches[0] : '';
-      cdomain = ((domain) ? '; domain=.' + domain : '');
+
+  var Option = {
+    get:function (name){
+      if(name) { return DEFALUT_OPTIONS[name]; }
+      return  DEFALUT_OPTIONS;
+    },
+    set:function (options){
+      Object.assign(DEFALUT_OPTIONS,options);
+      return DEFALUT_OPTIONS;
     }
-    if (time) {
-      var date = new Date();
-      date.setTime(date.getTime() + time);
-      expires = '; expires=' + date.toGMTString();
-    }
-    if (is_secure) {
-      secure = '; secure';
-    }
-    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
-  };
+  }
 
   var T = function () {
     var d = 1 * new Date();
@@ -93,21 +80,55 @@
     return T() + '-' + R() + '-' + UA() + '-' + se + '-' + T();
   }
 
+  var cookie = {
+    get:function (name) {
+      var nameEQ = name + '=';
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') { c = c.substring(1, c.length); }
+        if (c.indexOf(nameEQ) == 0) { return decodeURIComponent(c.substring(nameEQ.length, c.length)); }
+      }
+      return null;
+    },
+    set:function (name, value, time, cross_subdomain, is_secure) {
+      var cdomain = '',
+        expires = '',
+        secure = '';
+      if (cross_subdomain) {
+        var matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
+        domain = matches ? matches[0] : '';
+        cdomain = ((domain) ? '; domain=.' + domain : '');
+      }
+      if (time) {
+        var date = new Date();
+        date.setTime(date.getTime() + time);
+        expires = '; expires=' + date.toGMTString();
+      }
+      if (is_secure) {
+        secure = '; secure';
+      }
+      document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
+    },
+    remove:function (name, cross_subdomain) {
+      set(name, '', -1, cross_subdomain);
+    }
+  }
+
   var localStorage = window.localStorage;
 
   var createSessionId = function (){
-   
-    var ref = getDefaultOptions();
+    var ref = Option.get();
     var session_expiration = ref.session_expiration;
     if(document.referrer===''||document.referrer.indexOf(location.host)<0){
       var sessionId =uuid();
-      set('DTTRACE_SESSIONID',sessionId,session_expiration);
+      cookie.set('DTTRACE_SESSIONID',sessionId,session_expiration);
       localStorage.setItem('DTTRACE_SESSIONID',sessionId);
     }
   };
 
   var getSessionId=function (){
-    if(get('DTTRACE_SESSIONID')) { return get('DTTRACE_SESSIONID'); }
+    if(cookie.get('DTTRACE_SESSIONID')) { return cookie.get('DTTRACE_SESSIONID'); }
     if(localStorage.getItem('DTTRACE_SESSIONID')) { return localStorage.getItem('DTTRACE_SESSIONID'); }
   };
 
@@ -115,86 +136,72 @@
   var location$1 = window.location;
   var navigator$1 = window.navigator;
 
-  var getReferrerHost=function (referrer){
+  function getReferrerHost(referrer){
     var REG_TEST_REFERRER_LEGALITY=/:\/\/.*\//;
     if(REG_TEST_REFERRER_LEGALITY.test(referrer)){
       return referrer.match(REG_TEST_REFERRER_LEGALITY)[0].replace(/(:\/\/)|(\/)/g,'')
     }
-  };
+  }
 
-
-  var getScreenInfo=function (){
+  function getScreenInfo(){
     return screen$1&&{
       '$screen_height':screen$1.height,
       '$screen_width':screen$1.width,
       '$screen_colordepth':screen$1.colorDepth
     }
-  };
+  }
 
-  var getLocationInfo=function (){
+  function getLocationInfo(){
     return location$1&&{
       '$url':location$1.href,
       '$url_path':location$1.pathname+location$1.hash
     }
-  };
+  }
 
-  var getNavigatorInfo=function (){
+  function getNavigatorInfo(){
     return navigator$1&&{
       '$lang':navigator$1.language,
       '$user_agent':navigator$1.userAgent
     }
-  };
+  }
 
-  var getDocumentInfo=function (){
+  function getDocumentInfo(){
     return document&&{
       '$title' : document.title,
       '$referrer':document.referrer,
       '$referrer_host':getReferrerHost(document.referrer),
       '$cookie':document.cookie
     }
-  };
+  }
 
-  var getAllInfo=function (){
+  function getAllInfo(){
     return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
       '$session_id':getSessionId()
     });
-  };
+  }
+
 
   var DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
     '$DTTID':uuid()
   });
 
 
-  var DEFALUT_OPTIONS={
-    url:'https://recvapi.md.dtstack.com/dta/',
-    session_expiration:30*60*1000,
-    status:0
-  };
-
-  var getDefaultParams=function (){
-    Object.assign(DEFALUT_PARAMS,getAllInfo());
-    return DEFALUT_PARAMS;
-  };
-
-  var setDefaultParams=function (extraParams){
-    Object.assign(DEFALUT_PARAMS,extraParams);
-    return DEFALUT_PARAMS;  
-  };
-
-  var removeDefaultParams=function (name){
-    var value=DEFALUT_PARAMS[name];
-    delete DEFALUT_PARAMS[name];
-    return value;
-  };
-
-  var getDefaultOptions=function (){
-    return DEFALUT_OPTIONS;
-  };
-
-  var setDefaultOptions=function (options){
-    Object.assign(DEFALUT_OPTIONS,options);
-    return DEFALUT_OPTIONS;
-  };
+  var Param = {
+    get:function (name){
+      Object.assign(DEFALUT_PARAMS,getAllInfo());
+      if(name) { return DEFALUT_PARAMS[name]; }
+      return DEFALUT_PARAMS;
+    },
+    set:function (params){
+      Object.assign(DEFALUT_PARAMS,params);
+      return DEFALUT_PARAMS;
+    },
+    remove:function (name){
+      Object.assign(DEFALUT_PARAMS,getAllInfo());
+      var value = DEFALUT_PARAMS[name];
+      return value;
+    }
+  }
 
   //拼接字符串
   var serilize = function (params) {
@@ -214,15 +221,15 @@
   };
   //采集数据
   var send = function (params) {
-    var options=getDefaultOptions();
-    var newParams= Object.assign({},getDefaultParams(),params);
+    var options=Option.get();
+    var newParams=Object.assign({},Param.get(),params);
     if(options.status){
       var args = serilize(newParams);
       args += '&$timestamp=' + new Date().getTime();
       var img = new Image(1, 1);
       img.src = options.url+'?' + args;
     }else{
-      console.error("Dttrace not init,please excute Dttrace.init");
+      console.error(new Error("Dttrace not init,please excute Dttrace.init"));
     }
   };
 
@@ -346,15 +353,10 @@
       }else{
         addEventListener(window,'beforeunload',pageLeaveHandler,false);
       } 
-
-      setDefaultOptions({
-        status:1
-      });
     });
   }
 
-  //给事件进行埋点
-  var carryRocket =function(fun,params){
+  function carryRocket(fun,params){
     if(typeof fun === 'function'){
       var total = fun.length;
       return function(){
@@ -366,8 +368,8 @@
         send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result));
       }
     }
-    console.error("Dttrace.carryRocket参数传递错误");
-  };
+    console.error(new Error("first param in Dttrace.carryRocket must be function"));
+  }
 
   //DtaRocket注解
   function DttraceRocket(params) {
@@ -385,41 +387,36 @@
     var sessionExpiration = args.sessionExpiration;
     var params = args.params;
 
-    if (checkArgsIntegrity(args).length > 0) {
-      console.error('Dttrace initialize unsuccessfully,some required params no exist!');
-      checkArgsIntegrity(args).forEach(function (item) {
-        console.error(item);
-      });
-    } else {
-      if(sessionExpiration) { setDefaultOptions({session_expiration:sessionExpiration}); }
-      setDefaultParams(Object.assign({},{
-        $app_key:appKey,
-        $app_type:appType,
-        $token:token
-      },params));
+    try{
+      if (!appKey) { throw new Error('appKey no exist'); }
+      if (!appType) { throw new Error('appType no exist'); }
+      if (!token) { throw new Error('token no exist'); }
+    }catch(err){
+      Option.set({status:0});
+      console.error(err);
+    }
+
+    if(Option.get('status')){
+      var final_option={
+        appKey: appKey,
+        appType: appType,
+        token: token
+      };
+      if(sessionExpiration) { Object.assign(final_option,{session_expiration:sessionExpiration}); }
+      Option.set(final_option);
+      Param.set(params);
       //初始化
       initialize();
     }
-
-    function checkArgsIntegrity(args) {
-      var appKey = args.appKey;
-      var appType = args.appType;
-      var token = args.token;
-      var errorList = [];
-      if (!appKey) { errorList.push('appKey no exist'); }
-      if (!appType) { errorList.push('appType no exist'); }
-      if (!token) { errorList.push('token no exist'); }
-      return errorList;
-    }
   };
 
-  var launchRocket = function (params,event) {
+  function launchRocket(params,event){
     var final_params= params;
     if(event){
       Object.assign(final_params,eventInfoAnalyze(event));
     }
     send(final_params);
-  };
+  }
 
 
   var Dttrace={
@@ -427,8 +424,7 @@
     launchRocket: launchRocket,
     carryRocket: carryRocket,
     DttraceRocket: DttraceRocket,
-    setDefaultParams: setDefaultParams,
-    removeDefaultParams: removeDefaultParams
+    Param: Param
   };
 
   return Dttrace;
