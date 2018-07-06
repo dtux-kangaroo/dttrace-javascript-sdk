@@ -22,6 +22,7 @@
 **$stay_time** | 当前页面停留时间（多页应用自动采集，单页应用需自己手动添加）
 **$element_id** | 触发事件元素的id
 **$element_class_name** | 触发事件元素的类名
+**$element_content** | 触发事件元素的html内容
 **$element_name** | 触发事件元素的name属性
 **$element_type** | 触发事件元素的节点类型
 **$element_target_url** | 触发事件元素的href属性
