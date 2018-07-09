@@ -1,5 +1,6 @@
 import uuid from './uuid';
 import {getSessionId} from './session';
+import Option from './option';
 
 const {screen,location,navigator}=window;
 
@@ -41,9 +42,13 @@ function getDocumentInfo(){
   }
 }
 
+
 function getAllInfo(){
   return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-    '$session_id':getSessionId()
+    '$session_id':getSessionId(),
+    '$app_key':Option.get('appKey'),
+    '$app_type':Option.get('appType'),
+    '$token':Option.get('token')
   });
 }
 

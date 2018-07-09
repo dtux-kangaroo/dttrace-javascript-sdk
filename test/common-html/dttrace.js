@@ -11,7 +11,7 @@
 
   var location$1 = window.location;
   var DEFALUT_OPTIONS={
-    url:location$1.protocol+'//recvapi.md.dtstack.com/dta/',
+    url:location$1.protocol+'//172.16.10.86:7001',
     session_expiration:30*60*1000,
     status:1
   };
@@ -175,9 +175,13 @@
     }
   }
 
+
   function getAllInfo(){
     return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-      '$session_id':getSessionId()
+      '$session_id':getSessionId(),
+      '$app_key':Option.get('appKey'),
+      '$app_type':Option.get('appType'),
+      '$token':Option.get('token')
     });
   }
 

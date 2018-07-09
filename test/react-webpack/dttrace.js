@@ -175,9 +175,13 @@
     }
   }
 
+
   function getAllInfo(){
     return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-      '$session_id':getSessionId()
+      '$session_id':getSessionId(),
+      '$app_key':Option.get('appKey'),
+      '$app_type':Option.get('appType'),
+      '$token':Option.get('token')
     });
   }
 

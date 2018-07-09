@@ -11,7 +11,7 @@
     "dev:react":"rollup -w -c scripts/config.js --environment TARGET:dev-react",
     "build": "node scripts/build.js",
     "react:webpack": "node test/react-webpack/dta.server.js",
-    "common:html": "pushstate-server test/common-html 3000",
+    "common:html": "pushstate-server test/common-html 8005",
     "eslint": "eslint src"
   },
   "repository": {
