@@ -5,7 +5,9 @@
 **$token** | 申请应用获得的token
 **$app_type**| 申请应用获得的appType
 **$app_key** | 申请应用获得的appKey
-**$session_id** | 会话标识，由Dttrace自动生成
+**$dtsession_id** | 会话标识，由Dttrace自动生成
+**$session_id** | 用户系统自己的sessionId
+**$user_id** | 用户系统自己的userId
 **$DTTID** | 用户唯一标识
 **$url** | 当前页面地址
 **$url_path** | 当前页面路径。如果有hash，会保留hash
@@ -65,16 +67,17 @@ Dttrace.init({
 
 所有带有<**dttrace**>这个类名的html标签，点击时都会触发埋点操作，并一并采集 **data-dttrace-[参数名]** 设置的值
 ```
-<button class="dttrace" data-dttrace-[参数名]="[对应值]"></button>
+<button class="dttrace" data-dttrace-eventid="[对应值]" data-dttrace-[参数名]="[对应值]"></button>
 ```
-- 传$trigger_type这个参数时，需写成<**data-dttrace-triggertype=[对应值]**>，Dttrace会处理成$trigger_type
+- **data-dttrace-eventid** 这个自定义属性必须要有
 
 #### 第二种：调用Dttrace.launchRocket
 ```
-Dttrace.launchRocket(extraParams);
+Dttrace.launchRocket(eventid,extraParams,event);
 ```
-
-- **extraParams** &nbsp;&nbsp;&nbsp; 额外采集的数据。类型：Object
+- **eventid** 必选。事件id。 类型：Number
+- **extraParams** 非必选。额外采集的数据。类型：Object
+- **event** 非必选。JS事件对象
 
 #### 第三种：利用Dttrace.carryRocket对方法进行改造
 
@@ -87,13 +90,14 @@ Dttrace.launchRocket(extraParams);
 ```
 var btn=document.getElementById("btn1");
 
-btn.onclick=Dttrace.carryRocket(function(e){
+btn.onclick=Dttrace.carryRocket(eventid,function(e){
     console.log(e.target);
     return extraParamsTwo;
-},extraParamsOne,true);
+},extraParamsOne);
 ```
-- **extraParamsOne** &nbsp;&nbsp;&nbsp; 非必选。该事件触发之后，额外采集的数据。类型：Object
-- **extraParamsTwo** &nbsp;&nbsp;&nbsp; 非必选。return 返回的采集数据，一般用于需要事件响应函数处理过的采集数据，优先级大于extraParamsOne。类型：Object
+- **eventid** 必选。事件id。 类型：Number
+- **extraParamsOne** 非必选。该事件触发之后，额外采集的数据。类型：Object
+- **extraParamsTwo** 非必选。return 返回的采集数据，一般用于需要事件响应函数处理过的采集数据，优先级大于extraParamsOne。类型：Object
 
 
 #### 第四种：利用@DttraceRocket装饰器改造方法
@@ -106,7 +110,7 @@ class App extends PureComponent{
    count:0
   }
 
-  @DttraceRocket(extraParamsOne)
+  @DttraceRocket(eventid,extraParamsOne)
   add(){
     const {count}=this.state;
     this.setState({
@@ -115,7 +119,7 @@ class App extends PureComponent{
     return extraParamsTwo;
   }
 
-  @DttraceRocket()
+  @DttraceRocket(eventid)
   subtract(){
     const {count}=this.state;
     if(count>0){
@@ -136,19 +140,18 @@ class App extends PureComponent{
   }s
 }
 ```
-- **extraParamsOne** &nbsp;&nbsp;&nbsp; 非必选。该事件触发之后，额外采集的数据。类型：Object
-- **extraParamsTwo** &nbsp;&nbsp;&nbsp; 非必选。return 返回的采集数据，一般用于需要事件响应函数处理过的采集数据，优先级大于extraParamsOne。类型：Object
+- **eventid** 必选。事件id。 类型：Number
+- **extraParamsOne** 非必选。该事件触发之后，额外采集的数据。类型：Object
+- **extraParamsTwo** 非必选。return 返回的采集数据，一般用于需要事件响应函数处理过的采集数据，优先级大于extraParamsOne。类型：Object
 
 ## API说明
 
 ### init
-参数：
-
 参数名 | 参数类型 |参数说明
 ----|----|----
 **appKey** | String|必选。申请应用获得的appKey
-**appType** |String |必选。申请应用获得的appType
-**token** |String|必选。申请应用获得的token
+**getSessionId** |Function |非必选。获取用户系统的sessionId的函数
+**getUserId** |Function|非必选。获取用户系统的userId的函数
 **sessionExpiration** | Number|非必选。Dttrace.js生成的session的过期时间,精确到毫秒。默认30分钟
 **params** | Oject |非必选。全局的额外采集数据，会与默认采集数据组合
 
@@ -157,8 +160,12 @@ class App extends PureComponent{
 ```
     Dttrace.init({
         appKey:"dttrace-123456",
-        appType:"Web",
-        token:"a6dsewqg7sfi2y334s",
+        getSessionId: function(){
+            return Dttrace.cookie.get('SESSIONID')
+        },  
+        getUserId: function(){
+            return window.userId;
+        },  
         sessionExpiration:24*60*60*1000,
         params:{
             "realName":"隔壁老王",
@@ -166,11 +173,13 @@ class App extends PureComponent{
         }
     });
 ```
-### launchRocket
 
+### launchRocket
 参数名 | 参数类型 |参数说明
 ----|----|----
+**eventid** | Number |必选。事件id
 **params** | Oject |非必选。该响应函数执行时，额外采集的数据
+**event** |Oject[Event]| 非必选。事件对象，Dttrace会采集其相关信息
 
 **示例：**
 
@@ -191,18 +200,19 @@ class App extends PureComponent{
 **js**
 ```
     var form=document.getElementById("form_register");
-    form.onsubmit=function(){
-        Dttrace.launchRocket({
+    form.onsubmit=function(e){
+        Dttrace.launchRocket(3008,{
             form_type:"register",
             username:form.username.value,
             password:form.password.value
-        });
+        },e);
     };
 ```
-### carryRocket
 
+### carryRocket
 参数名 | 参数类型 |参数说明
 ----|----|----
+**eventid** | Number |必选。事件id
 **fun** | Function| 必选。被改造事件响应函数。
 **params** | Oject |非必选。该响应函数执行时，额外采集的数据
 
@@ -225,7 +235,7 @@ class App extends PureComponent{
 **js**
 ```
     var form=document.getElementById("form_search");
-    form.onsubmit=Dttrace.carryRocket(function(){
+    form.onsubmit=Dttrace.carryRocket(3008,function(){
         ...
         execute your code about business
         ...
@@ -233,13 +243,14 @@ class App extends PureComponent{
         form_type:"search"
     });
 ```
-### getDefaultParams
 
+### getDefaultParams
 参数名 | 参数类型 |参数说明
 ----|----|----
 **name** | String |非必选。对应数据名的预置采集数据值
 
-无参数时，会获取当前全局预置采集数据,自定义预置采集数据+Dttrace预置采集数据。
+- 无参数时，会获取当前全局预置采集数据,自定义预置采集数据+Dttrace预置采集数据。
+- 若自定义预置采集数据和Dttrace预置采集数据存在同名字段，遵循自定义>Dttrace的原则。
 
 **示例：**
 
@@ -251,7 +262,7 @@ class App extends PureComponent{
 ### setDefaultParams
 参数名 | 参数类型 |参数说明
 ----|----|----
-**params** | Oject |非必选。自定义预置采集数据，会与Dttrace预置采集数据组合，并覆盖Dttrace预置采集数据。
+**params** | Oject |非必选。自定义预置采集数据。
 
 **示例：**
 
@@ -261,13 +272,52 @@ class App extends PureComponent{
         "realName":"隔壁老王"
     }); 
 ```
+
 ### removeDefaultParams
 参数名 | 参数类型 |参数说明
 ----|----|----
-**name** | String |必选。需要被删除的预置采集数据（自定义或者Dttrace）名称。
+**name** | String |必选。需要被删除的自定义预置采集数据名称。
 
 **示例：**
 
 ```
     Dttrace.removeDefaultParams("realName"); //获取预置采集数据"realName"对应的值
+```
+
+### cookie
+#### get
+参数名 | 参数类型 |参数说明
+----|----|----
+**name** | Number|String |必选。cookie的key
+
+**示例：**
+
+```
+    Dttrace.cookie.get("realName"); //获取预置采集数据"realName"对应的值
+```
+
+#### set
+参数名 | 参数类型 |参数说明
+----|----|----
+**name** | String |必选。cookie的key
+**value** |Number|String|必选。cookie的value
+**time** |Number|非必选。cookie的过期时间（精确到毫秒）
+**cross_subdomain** |Boolean|非必选。是否允许主域相同的域名可以共享
+**is_secure** |Boolean|非必选。是否只允许cookie在https协议下才能上传到服务器
+
+**示例：**
+
+```
+    Dttrace.cookie.set("realName","袋鼠宝宝",true,false); //获取预置采集数据"realName"对应的值
+```
+
+#### remove
+
+**name** |Boolean|必选。cookie的key
+**cross_subdomain** |Boolean|非必选。是否在domain为主域的cookie下删除
+
+**示例：**
+
+```
+    Dttrace.cookie.remove("realName",true); //获取预置采集数据"realName"对应的值
 ```
