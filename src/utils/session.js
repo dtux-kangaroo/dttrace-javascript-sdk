@@ -4,7 +4,7 @@ import uuid from './uuid';
 
 const {localStorage}=window;
 
-export const createSessionId = ()=>{
+export const createDtSessionId = ()=>{
   const {session_expiration} = Option.get();
   if(document.referrer===''||document.referrer.indexOf(location.host)<0){
     const sessionId =uuid();
@@ -13,7 +13,7 @@ export const createSessionId = ()=>{
   }
 }
 
-export const getSessionId=()=>{
+export const getDtSessionId=()=>{
   if(cookie.get('DTTRACE_SESSIONID')) return cookie.get('DTTRACE_SESSIONID');
   if(localStorage.getItem('DTTRACE_SESSIONID')) return localStorage.getItem('DTTRACE_SESSIONID');
 }

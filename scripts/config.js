@@ -1,6 +1,7 @@
 const path=require('path');
 const buble =require('rollup-plugin-buble');
 const uglify=require('rollup-plugin-uglify').uglify;
+const resolve=require('rollup-plugin-node-resolve');
 const version = process.env.VERSION || require('../package.json').version;
 const banner =
   '/*!\n' +
@@ -44,6 +45,7 @@ function getConfig(name){
       banner: opts.banner,
     },
     plugins:[
+      resolve(),
       buble()
     ].concat(opts.plugins||[])
   }

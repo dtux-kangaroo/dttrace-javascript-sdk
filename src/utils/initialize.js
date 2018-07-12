@@ -1,7 +1,8 @@
 import send from './send';
 import ready from './ready';
-import {createSessionId} from './session';
+import {createDtSessionId} from './session';
 import {eventInfoAnalyze} from './event';
+
 
 
 // 添加监听事件
@@ -21,11 +22,11 @@ export default () => {
   ready(()=>{
     const enter_time=new Date().getTime();
     //分配sessionId
-    createSessionId();
+    createDtSessionId();
     //监听页面进入
     const pageEnterHandler=()=>{
       send({
-        $trigger_type:'enter',
+        $event_id:2001,
       }); 
     }
 
@@ -48,9 +49,9 @@ export default () => {
             params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
           }
         });
-        if(params.triggertype){
-          params.$trigger_type=params.triggertype;
-          delete params.triggertype;
+        if(params.eventid){
+          params.$event_id=params.eventid;
+          delete params.eventid;
         } 
         send(Object.assign({},eventInfoAnalyze(final_event),params));
       }
@@ -61,7 +62,7 @@ export default () => {
       const current_time = new Date().getTime(); 
       const $stay_time = current_time - enter_time;
       send({
-        $trigger_type:'leave',
+        $event_id:2002,
         $stay_time
       });
     }

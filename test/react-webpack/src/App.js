@@ -6,7 +6,7 @@ class App extends PureComponent{
    count:0
   }
 
-  @DttraceRocket({type:"add"})
+  @DttraceRocket(1008,{type:"add"})
   add(){
     const {count}=this.state;
     this.setState({
@@ -17,7 +17,7 @@ class App extends PureComponent{
     }
   }
 
-  @DttraceRocket()
+  @DttraceRocket(1008)
   subtract(){
     const {count}=this.state;
     if(count>0){
@@ -37,7 +37,7 @@ class App extends PureComponent{
             <div>
                 <button onClick={this.add.bind(this)}>加1</button>
                 <button onClick={this.subtract.bind(this)}>减1</button>
-                <button onClick={carryRocket(this.reset.bind(this),{type:'reset'})}>清零</button>
+                <button onClick={carryRocket(1008,this.reset.bind(this),{type:'reset'})}>清零</button>
                 <div>结果：{count}</div>
                 
             </div>

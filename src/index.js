@@ -1,35 +1,50 @@
 import Option from './utils/option';
 import Param from './utils/param';
 import send from './utils/send';
+import cookie from './utils/cookie';
 import initialize from './utils/initialize';
 import {
   eventInfoAnalyze
 } from './utils/event';
 
 
-function carryRocket(fun,params){
-  if(typeof fun === 'function'){
-    let total = fun.length
-    let current = 0
-    const argsArray = []
-    while (current < total) {
-      argsArray.push('arg' + current)
-      current++
+function carryRocket(eventId,fun,params){
+  if(typeof eventId === 'number'){
+    if(typeof fun === 'function'){
+      let total = fun.length
+      let current = 0
+      const argsArray = []
+      while (current < total) {
+        argsArray.push('arg' + current)
+        current++
+      }
+      return function(...argsArray){
+        const final_event = window.event ? window.event : arg0;
+        const result=fun.apply(this,argsArray);
+        send(Object.assign({
+          $event_id:eventId
+        }, eventInfoAnalyze(final_event),params,result))
+      }
+    }else{
+      console.error(new Error("the second param in Dttrace.carryRocket must be function"));
     }
-    return function(...argsArray){
-      const final_event = window.event ? window.event : arg0;
-      const result=fun.apply(this,argsArray);
-      send(Object.assign({}, eventInfoAnalyze(final_event),params,result))
-    }
+  }else{
+    console.error(new Error("the first param in Dttrace.carryRocket must be number"));
   }
-  console.error(new Error("first param in Dttrace.carryRocket must be function"));
 }
 
 //DtaRocket注解
-function DttraceRocket(params) {
-  return (target, name, descriptor) => { 
-    target[name]=carryRocket(target[name],params);
-    return target;
+function DttraceRocket(eventId,params) {
+  if(typeof eventId === 'number'){
+    const final_params=Object.assign({
+      $event_id:eventId
+    },params);
+    return (target, name, descriptor) => { 
+      target[name]=carryRocket(eventId,target[name],final_params);
+      return target;
+    }
+  }else{
+    console.error(new Error("the first param in @DttraceRocket must be number"));
   }
 }
 
@@ -37,8 +52,8 @@ function DttraceRocket(params) {
 const init = (args) => {
   const {
     appKey,
-    appType,
-    token,
+    getSessionId,
+    getUserId,
     sessionExpiration,
     serverUrl,
     params
@@ -46,8 +61,6 @@ const init = (args) => {
 
   try{
     if (!appKey) throw new Error('appKey no exist');
-    if (!appType) throw new Error('appType no exist');
-    if (!token) throw new Error('token no exist');
   }catch(err){
     Option.set({status:0});
     console.error(err);
@@ -56,11 +69,14 @@ const init = (args) => {
   if(Option.get('status')){
     let final_option={
       appKey,
-      appType,
-      token
+      getSessionId,
+      getUserId
     }
     if(sessionExpiration) Object.assign(final_option,{session_expiration:sessionExpiration});
     if(serverUrl) Object.assign(final_option,{server_url:serverUrl});
+    if(typeof getSessionId === 'function') Object.assign(final_option,{getSessionId});
+    if(typeof getUserId === 'function') Object.assign(final_option,{getUserId});
+
     Option.set(final_option);
     Param.set(params);
     //初始化
@@ -68,12 +84,18 @@ const init = (args) => {
   }
 }
 
-function launchRocket(params,event){
-  const final_params= params;
-  if(event){
-    Object.assign(final_params,eventInfoAnalyze(event));
+function launchRocket(eventId,params,event){
+  if(typeof eventId === 'number'){
+    const final_params= Object.assign({
+      $event_id:eventId
+    },params);
+    if(event){
+      Object.assign(final_params,eventInfoAnalyze(event));
+    }
+    send(final_params);
+  }else{
+    console.error(new Error("the first param in Dttrace.launchRocket must be number"));
   }
-  send(final_params);
 }
 
 
@@ -82,6 +104,7 @@ const Dttrace={
   launchRocket,
   carryRocket,
   DttraceRocket,
+  cookie,
   Param
 }
 

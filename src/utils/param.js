@@ -1,5 +1,5 @@
 import uuid from './uuid';
-import {getSessionId} from './session';
+import {getDtSessionId} from './session';
 import Option from './option';
 
 const {screen,location,navigator}=window;
@@ -42,35 +42,58 @@ function getDocumentInfo(){
   }
 }
 
+function getDTTID(){
+  let $DTTID=localStorage.getItem('$DTTID');
+  if(!$DTTID){
+    $DTTID=uuid();
+    localStorage.setItem('$DTTID',$DTTID)
+  }
+  return $DTTID;
+}
 
-function getAllInfo(){
+
+function getPresetParams(){
+  const userId=(()=>{
+    const getUserId=Option.get('getUserId');
+    if(typeof getUserId === 'function'){
+      return getUserId();
+    }
+    return;
+  })();
+  const sessionId=(()=>{
+    const getSessionId=Option.get('getSessionId');
+    if(typeof getSessionId === 'function'){
+      return getSessionId();
+    }
+    return;
+  })();
+  const getSessionId=Option.get('getSessionId');
   return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
-    '$session_id':getSessionId(),
+    '$dtsession_id':getDtSessionId(),
     '$app_key':Option.get('appKey'),
-    '$app_type':Option.get('appType'),
-    '$token':Option.get('token')
+    '$DTTID':getDTTID(),
+    '$user_id':userId,
+    '$session_id':sessionId
   });
 }
 
 
-const DEFALUT_PARAMS=Object.assign({},getAllInfo(),{
-  '$DTTID':uuid()
-});
+const DEFALUT_PARAMS={};
+
 
 
 export default {
   get:(name)=>{
-    Object.assign(DEFALUT_PARAMS,getAllInfo());
-    if(name) return DEFALUT_PARAMS[name];
-    return DEFALUT_PARAMS;
+    const params=Object.assign({},getPresetParams(),DEFALUT_PARAMS);
+    if(name) return params[name];
+    return params;
   },
   set:(params)=>{
-    Object.assign(DEFALUT_PARAMS,params);
-    return DEFALUT_PARAMS;
+    return Object.assign(DEFALUT_PARAMS,params);
   },
   remove:(name)=>{
-    Object.assign(DEFALUT_PARAMS,getAllInfo());
     const value = DEFALUT_PARAMS[name];
+    delete DEFALUT_PARAMS[name];
     return value;
   }
 }

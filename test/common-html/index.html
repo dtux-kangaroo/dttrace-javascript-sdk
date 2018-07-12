@@ -13,13 +13,11 @@
 <script src="dttrace.js"></script>
 <script>
     Dttrace.init({
-      appKey:112,
-      appType:'h5',
-      token:"3323"
+      appKey:112
     });
   
     var btn1=document.getElementById("btn");
-    btn1.onclick=Dttrace.carryRocket(function(event){
+    btn1.onclick=Dttrace.carryRocket(1006,function(event){
       console.log(this)
       return {
         $trigger_type:'action'
@@ -27,7 +25,7 @@
     });
     var btn2=document.getElementById("btn2")  
     btn2.onclick=function(e){
-     Dttrace.launchRocket({
+     Dttrace.launchRocket(1003,{
        hello:123,
        $trigger_type:'action'
      },e)

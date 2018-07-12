@@ -1,6 +1,7 @@
 import Option from './option';
 import Param from './param';
-
+import md5 from './md5';
+const hex_md5=md5.hex_md5;
 //拼接字符串
 const serilize = (params) => {
   let args = ''
@@ -22,16 +23,14 @@ const send = (params) => {
   const options=Option.get();
   const newParams=Object.assign({},Param.get(),params)
   if(options.status){
-    if(!params.$trigger_type){
-      console.error(new Error('$trigger_type not exist in params'));
-      return;
-    } 
+    const timestamp=new Date().getTime();
+    const token=hex_md5(options.appKey+timestamp);
     let args = serilize(newParams);
-    args += '&$timestamp=' + new Date().getTime();
+    args += `&$timestamp=${timestamp}&$token=${token}`;
     const img = new Image(1, 1);
     img.src = options.server_url+'?' + args;
   }else{
     console.error(new Error('Dttrace not init,please excute Dttrace.init'));
   }
 }
-export default send
+export default send;
