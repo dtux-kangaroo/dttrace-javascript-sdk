@@ -67,6 +67,8 @@ Dttrace.init({
 ```
 <button class="dttrace" data-dttrace-[参数名]="[对应值]"></button>
 ```
+- 传$trigger_type这个参数时，需写成<**data-dttrace-triggertype=[对应值]**>，Dttrace会处理成$trigger_type
+
 #### 第二种：调用Dttrace.launchRocket
 ```
 Dttrace.launchRocket(extraParams);
