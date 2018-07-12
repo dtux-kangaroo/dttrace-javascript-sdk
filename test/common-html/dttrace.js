@@ -396,6 +396,7 @@
     var appType = args.appType;
     var token = args.token;
     var sessionExpiration = args.sessionExpiration;
+    var serverUrl = args.serverUrl;
     var params = args.params;
 
     try{

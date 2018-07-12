@@ -40,6 +40,7 @@ const init = (args) => {
     appType,
     token,
     sessionExpiration,
+    serverUrl,
     params
   } = args;
 
