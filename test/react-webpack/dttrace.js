@@ -229,12 +229,16 @@
     var options=Option.get();
     var newParams=Object.assign({},Param.get(),params);
     if(options.status){
+      if(!params.$trigger_type){
+        console.error(new Error('$trigger_type not exist in params'));
+        return;
+      } 
       var args = serilize(newParams);
       args += '&$timestamp=' + new Date().getTime();
       var img = new Image(1, 1);
       img.src = options.url+'?' + args;
     }else{
-      console.error(new Error("Dttrace not init,please excute Dttrace.init"));
+      console.error(new Error('Dttrace not init,please excute Dttrace.init'));
     }
   };
 
@@ -337,9 +341,7 @@
               params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
             }
           });
-          send(Object.assign({
-            $trigger_type:'action'
-          },eventInfoAnalyze(final_event),params));
+          send(Object.assign({},eventInfoAnalyze(final_event),params));
         }
       },false);
 
@@ -370,7 +372,7 @@
 
         var final_event = window.event ? window.event : arg0;
         var result=fun.apply(this,argsArray);
-        send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result));
+        send(Object.assign({}, eventInfoAnalyze(final_event),params,result));
       }
     }
     console.error(new Error("first param in Dttrace.carryRocket must be function"));

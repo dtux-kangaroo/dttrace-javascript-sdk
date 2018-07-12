@@ -48,9 +48,7 @@ export default () => {
             params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key]
           }
         });
-        send(Object.assign({
-          $trigger_type:'action'
-        },eventInfoAnalyze(final_event),params));
+        send(Object.assign({},eventInfoAnalyze(final_event),params));
       }
     },false);
 

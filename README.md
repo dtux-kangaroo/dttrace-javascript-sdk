@@ -18,7 +18,7 @@
 **$lang** | 语言类型
 **$user_agent** | 浏览器相关信息
 **$timestamp** | 埋点日志时间（时间戳的形式）
-**$trigger_type** | 触发类型：enter-页面进入，action-用户行为，leave-页面离开
+**$trigger_type** | 触发类型（需用户自己填写，必填项）
 **$stay_time** | 当前页面停留时间（多页应用自动采集，单页应用需自己手动添加）
 **$element_id** | 触发事件元素的id
 **$element_class_name** | 触发事件元素的类名

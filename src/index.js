@@ -19,7 +19,7 @@ function carryRocket(fun,params){
     return function(...argsArray){
       const final_event = window.event ? window.event : arg0;
       const result=fun.apply(this,argsArray);
-      send(Object.assign({}, eventInfoAnalyze(final_event), Object.assign({$trigger_type:'action'},params),result))
+      send(Object.assign({}, eventInfoAnalyze(final_event),params,result))
     }
   }
   console.error(new Error("first param in Dttrace.carryRocket must be function"));
