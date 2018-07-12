@@ -1,6 +1,6 @@
 const {location}=window;
 const DEFALUT_OPTIONS={
-  url:location.protocol+'//recvapi.md.dtstack.com/dta/',
+  server_url:location.protocol+'//recvapi.md.dtstack.com/dta/',
   session_expiration:30*60*1000,
   status:1
 }

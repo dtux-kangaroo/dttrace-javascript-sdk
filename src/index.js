@@ -59,6 +59,7 @@ const init = (args) => {
       token
     }
     if(sessionExpiration) Object.assign(final_option,{session_expiration:sessionExpiration});
+    if(serverUrl) Object.assign(final_option,{server_url:serverUrl});
     Option.set(final_option);
     Param.set(params);
     //初始化

@@ -11,7 +11,7 @@
 
   var location$1 = window.location;
   var DEFALUT_OPTIONS={
-    url:location$1.protocol+'//recvapi.md.dtstack.com/dta/',
+    server_url:location$1.protocol+'//recvapi.md.dtstack.com/dta/',
     session_expiration:30*60*1000,
     status:1
   };
@@ -236,7 +236,7 @@
       var args = serilize(newParams);
       args += '&$timestamp=' + new Date().getTime();
       var img = new Image(1, 1);
-      img.src = options.url+'?' + args;
+      img.src = options.server_url+'?' + args;
     }else{
       console.error(new Error('Dttrace not init,please excute Dttrace.init'));
     }
@@ -414,6 +414,7 @@
         token: token
       };
       if(sessionExpiration) { Object.assign(final_option,{session_expiration:sessionExpiration}); }
+      if(serverUrl) { Object.assign(final_option,{server_url:serverUrl}); }
       Option.set(final_option);
       Param.set(params);
       //初始化

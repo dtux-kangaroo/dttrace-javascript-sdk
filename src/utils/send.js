@@ -29,7 +29,7 @@ const send = (params) => {
     let args = serilize(newParams);
     args += '&$timestamp=' + new Date().getTime();
     const img = new Image(1, 1);
-    img.src = options.url+'?' + args;
+    img.src = options.server_url+'?' + args;
   }else{
     console.error(new Error('Dttrace not init,please excute Dttrace.init'));
   }
