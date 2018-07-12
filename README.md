@@ -2,8 +2,7 @@
 ## 预置采集数据
 字段 | 描述
 -----|-----
-**$token** | 申请应用获得的token
-**$app_type**| 申请应用获得的appType
+**$token** | Dttrace根据appKey生成的token
 **$app_key** | 申请应用获得的appKey
 **$dtsession_id** | 会话标识，由Dttrace自动生成
 **$session_id** | 用户系统自己的sessionId
@@ -52,8 +51,12 @@ import Dttrace from 'dttrace';
 ```
 Dttrace.init({
     appKey:<申请应用获得的appKey，必填>,
-    appType:<申请应用获得的app类型，必填>,
-    token:<申请应用获得的token，必填>,
+    getSessionId:function(){
+        return <用户系统自己分配的sessionId>;
+    },
+    getUserId:function(){
+        return <用户系统自己分配的userId>;
+    },
     sessionExpiration:'<Dttrace.js生成的session的过期时间，非必填>',
     params:<自定义预置采集数据，会与Dttrace预置采集数据组合（Object），但不会覆盖Dttrace预置数据>
 });
