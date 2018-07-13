@@ -290,12 +290,12 @@ class App extends PureComponent{
 ### cookie.get
 参数名 | 参数类型 |参数说明
 ----|----|----
-**name** | Number|String |必选。cookie的key
+**name** | String |必选。cookie的key
 
 **示例：**
 
 ```
-    Dttrace.cookie.get("realName"); //获取预置采集数据"realName"对应的值
+    Dttrace.cookie.get("realName"); //获取cookie中"realName"对应的值
 ```
 
 ### cookie.set
@@ -310,16 +310,17 @@ class App extends PureComponent{
 **示例：**
 
 ```
-    Dttrace.cookie.set("realName","袋鼠宝宝",true,false); //获取预置采集数据"realName"对应的值
+    Dttrace.cookie.set("realName","袋鼠宝宝",true,false); //设置cookie中"realName"为"袋鼠宝宝"，domain为当前主域，secure为false
 ```
 
 ### cookie.remove
-
-**name** |Boolean|必选。cookie的key
+参数名 | 参数类型 |参数说明
+----|----|----
+**name** |String|必选。cookie的key
 **cross_subdomain** |Boolean|非必选。是否在domain为主域的cookie下删除
 
 **示例：**
 
 ```
-    Dttrace.cookie.remove("realName",true); //获取预置采集数据"realName"对应的值
+    Dttrace.cookie.remove("realName",true); //删除cookie中"realName"字段
 ```
