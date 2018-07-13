@@ -287,8 +287,7 @@ class App extends PureComponent{
     Dttrace.removeDefaultParams("realName"); //获取预置采集数据"realName"对应的值
 ```
 
-### cookie
-#### get
+### cookie.get
 参数名 | 参数类型 |参数说明
 ----|----|----
 **name** | Number|String |必选。cookie的key
@@ -299,7 +298,7 @@ class App extends PureComponent{
     Dttrace.cookie.get("realName"); //获取预置采集数据"realName"对应的值
 ```
 
-#### set
+### cookie.set
 参数名 | 参数类型 |参数说明
 ----|----|----
 **name** | String |必选。cookie的key
@@ -314,7 +313,7 @@ class App extends PureComponent{
     Dttrace.cookie.set("realName","袋鼠宝宝",true,false); //获取预置采集数据"realName"对应的值
 ```
 
-#### remove
+### cookie.remove
 
 **name** |Boolean|必选。cookie的key
 **cross_subdomain** |Boolean|非必选。是否在domain为主域的cookie下删除
