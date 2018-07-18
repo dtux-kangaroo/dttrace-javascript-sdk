@@ -81,6 +81,25 @@
     return T() + '-' + R() + '-' + UA() + '-' + se + '-' + T();
   }
 
+  function setCookie(name, value, time, cross_subdomain, is_secure){
+    var cdomain = '',
+      expires = '',
+      secure = '';
+    if (cross_subdomain) {
+      var matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
+      domain = matches ? matches[0] : '';
+      cdomain = ((domain) ? '; domain=.' + domain : '');
+    }
+    if (time) {
+      var date = new Date();
+      date.setTime(date.getTime() + time);
+      expires = '; expires=' + date.toGMTString();
+    }
+    if (is_secure) {
+      secure = '; secure';
+    }
+    document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
+  }
   var cookie = {
     get:function (name) {
       var nameEQ = name + '=';
@@ -92,27 +111,9 @@
       }
       return null;
     },
-    set:function (name, value, time, cross_subdomain, is_secure) {
-      var cdomain = '',
-        expires = '',
-        secure = '';
-      if (cross_subdomain) {
-        var matches = document.location.hostname.match(/[a-z0-9][a-z0-9\-]+\.[a-z\.]{2,6}$/i),
-        domain = matches ? matches[0] : '';
-        cdomain = ((domain) ? '; domain=.' + domain : '');
-      }
-      if (time) {
-        var date = new Date();
-        date.setTime(date.getTime() + time);
-        expires = '; expires=' + date.toGMTString();
-      }
-      if (is_secure) {
-        secure = '; secure';
-      }
-      document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
-    },
+    set:setCookie,
     remove:function (name, cross_subdomain) {
-      set(name, '', -1, cross_subdomain);
+      setCookie(name, '', -1, cross_subdomain);
     }
   }
 
