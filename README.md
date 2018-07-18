@@ -310,7 +310,7 @@ class App extends PureComponent{
 **示例：**
 
 ```
-    Dttrace.cookie.set("realName","袋鼠宝宝",true,false); //设置cookie中"realName"为"袋鼠宝宝"，domain为当前主域，secure为false
+    Dttrace.cookie.set("realName","袋鼠宝宝",60*1000,true,false); //设置cookie中"realName"为"袋鼠宝宝"，domain为当前主域，secure为false
 ```
 
 ### cookie.remove
