@@ -247,7 +247,7 @@ class App extends PureComponent{
     });
 ```
 
-### getDefaultParams
+### Param.get
 参数名 | 参数类型 |参数说明
 ----|----|----
 **name** | String |非必选。对应数据名的预置采集数据值
@@ -258,11 +258,11 @@ class App extends PureComponent{
 **示例：**
 
 ```
-   Dttrace.getDefaultParams("realName"); //获取预置采集数据"realName"对应的值
-   Dttrace.getDefaultParams(); //获取当前全局预置采集数据
+   Dttrace.Param.get("realName"); //获取预置采集数据"realName"对应的值
+   Dttrace.Param.get(); //获取当前全局预置采集数据
 ```
 
-### setDefaultParams
+### Param.set
 参数名 | 参数类型 |参数说明
 ----|----|----
 **params** | Oject |非必选。自定义预置采集数据。
@@ -271,12 +271,12 @@ class App extends PureComponent{
 
 ```
     //全局预置采集数据添加一条realName(隔壁老王)的预置采集数据
-    Dttrace.setDefaultParams({
+    Dttrace.Param.set({
         "realName":"隔壁老王"
     }); 
 ```
 
-### removeDefaultParams
+### Param.remove
 参数名 | 参数类型 |参数说明
 ----|----|----
 **name** | String |必选。需要被删除的自定义预置采集数据名称。
@@ -284,7 +284,7 @@ class App extends PureComponent{
 **示例：**
 
 ```
-    Dttrace.removeDefaultParams("realName"); //获取预置采集数据"realName"对应的值
+    Dttrace.Param.remove("realName"); //获取预置采集数据"realName"对应的值
 ```
 
 ### cookie.get
