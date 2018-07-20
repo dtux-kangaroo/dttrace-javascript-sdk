@@ -1,5 +1,19 @@
 {
   "presets":[
-    "es2015"
-  ]
+    ["env", {
+      "modules": false,
+      "targets": {
+        "browsers": ["> 1%", "last 2 versions", "not ie >= 8"]
+      }
+    }]
+  ],
+  "plugins": [
+    ["transform-runtime",{
+      "helpers": true,
+      "polyfill": true,
+      "regenerator": true,
+      "moduleName": "babel-runtime"
+    }],
+    "external-helpers"
+  ]  
 }

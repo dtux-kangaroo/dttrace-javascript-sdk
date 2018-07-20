@@ -9,7 +9,7 @@ export const createDtSessionId = ()=>{
   if(document.referrer===''||document.referrer.indexOf(location.host)<0){
     const sessionId =uuid();
     cookie.set('DTTRACE_SESSIONID',sessionId,session_expiration);
-    localStorage.setItem('DTTRACE_SESSIONID',sessionId)
+    localStorage.setItem('DTTRACE_SESSIONID',sessionId);
   }
 }
 
