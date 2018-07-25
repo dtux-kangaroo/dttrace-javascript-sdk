@@ -2,6 +2,7 @@ import send from './send';
 import ready from './ready';
 import {createDtSessionId} from './session';
 import {eventInfoAnalyze} from './event';
+import uuid from './uuid';
 
 
 
@@ -22,7 +23,7 @@ export default () => {
   ready(()=>{
     const enter_time=new Date().getTime();
     //分配sessionId
-    createDtSessionId();
+    createDtSessionId(uuid());
     //监听页面进入
     const pageEnterHandler=()=>{
       send({
