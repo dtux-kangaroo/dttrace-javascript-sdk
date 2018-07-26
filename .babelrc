@@ -9,11 +9,11 @@
   ],
   "plugins": [
     ["transform-runtime",{
-      "helpers": true,
-      "polyfill": true,
-      "regenerator": true,
+      "helpers": false,
+      "polyfill": false,
+      "regenerator": false,
       "moduleName": "babel-runtime"
     }],
-    "external-helpers"
+    "transform-object-assign"
   ]  
 }

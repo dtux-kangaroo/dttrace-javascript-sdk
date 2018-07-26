@@ -4,13 +4,12 @@
  * Released under the MIT License.
  */
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('babel-runtime/core-js/object/assign'), require('babel-runtime/core-js/object/keys')) :
-  typeof define === 'function' && define.amd ? define(['babel-runtime/core-js/object/assign', 'babel-runtime/core-js/object/keys'], factory) :
-  (global.Dttrace = factory(global._Object$assign,global._Object$keys));
-}(this, (function (_Object$assign,_Object$keys) { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  (global.Dttrace = factory());
+}(this, (function () { 'use strict';
 
-  _Object$assign = _Object$assign && _Object$assign.hasOwnProperty('default') ? _Object$assign['default'] : _Object$assign;
-  _Object$keys = _Object$keys && _Object$keys.hasOwnProperty('default') ? _Object$keys['default'] : _Object$keys;
+  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
   var _window = window,
       location$1 = _window.location;
@@ -27,7 +26,7 @@
       return DEFALUT_OPTIONS;
     },
     set: function set(options) {
-      _Object$assign(DEFALUT_OPTIONS, options);
+      _extends(DEFALUT_OPTIONS, options);
       return DEFALUT_OPTIONS;
     }
   };
@@ -149,6 +148,8 @@
     return sessionId;
   };
 
+  var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   var _window$2 = window,
       screen$1 = _window$2.screen,
       location$2 = _window$2.location,
@@ -217,7 +218,7 @@
       }
       return;
     }();
-    return _Object$assign({}, getScreenInfo(), getLocationInfo(), getNavigatorInfo(), getDocumentInfo(), {
+    return _extends$1({}, getScreenInfo(), getLocationInfo(), getNavigatorInfo(), getDocumentInfo(), {
       '$dtsession_id': getDtSessionId(),
       '$app_key': Option.get('appKey'),
       '$DTTID': getDTTID(),
@@ -230,12 +231,12 @@
 
   var Param = {
     get: function get(name) {
-      var params = _Object$assign({}, getPresetParams(), DEFALUT_PARAMS);
+      var params = _extends$1({}, getPresetParams(), DEFALUT_PARAMS);
       if (name) return params[name];
       return params;
     },
     set: function set(params) {
-      return _Object$assign(DEFALUT_PARAMS, params);
+      return _extends$1(DEFALUT_PARAMS, params);
     },
     remove: function remove(name) {
       var value = DEFALUT_PARAMS[name];
@@ -486,6 +487,7 @@
     str_hmac_md5: str_hmac_md5
   };
 
+  var _extends$2 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
   var hex_md5$1 = md5.hex_md5;
   //拼接字符串
   var serilize = function serilize(params) {
@@ -506,7 +508,7 @@
   //采集数据
   var send = function send(params) {
     var options = Option.get();
-    var newParams = _Object$assign({}, Param.get(), params);
+    var newParams = _extends$2({}, Param.get(), params);
     if (options.status) {
       var timestamp = new Date().getTime();
       var token = hex_md5$1(options.appKey + timestamp);
@@ -574,6 +576,8 @@
       };
   };
 
+  var _extends$3 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   // 添加监听事件
   var addEventListener = function addEventListener(element, evType, fn, useCapture) {
     if (element.addEventListener) {
@@ -612,7 +616,7 @@
         var target_element = final_event.target || final_event.srcElement;
         if (target_element.className.indexOf('dttrace') > -1) {
           var params = {};
-          _Object$keys(target_element.dataset).filter(function (key) {
+          Object.keys(target_element.dataset).filter(function (key) {
             if (key.indexOf('dttrace') > -1) {
               params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
             }
@@ -621,7 +625,7 @@
             params.$event_id = params.eventid;
             delete params.eventid;
           }
-          send(_Object$assign({}, eventInfoAnalyze(final_event), params));
+          send(_extends$3({}, eventInfoAnalyze(final_event), params));
         }
       }, false);
 
@@ -643,6 +647,8 @@
     });
   });
 
+  var _extends$4 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
   function carryRocket(eventId, fun, params) {
     if (typeof eventId === 'number') {
       if (typeof fun === 'function') {
@@ -655,7 +661,7 @@
           }
 
           var result = fun.apply(this, argsArray);
-          send(_Object$assign({
+          send(_extends$4({
             $event_id: eventId
           }, eventInfoAnalyze(final_event), params, result));
         };
@@ -670,7 +676,7 @@
   //DtaRocket注解
   function DttraceRocket(eventId, params) {
     if (typeof eventId === 'number') {
-      var final_params = _Object$assign({
+      var final_params = _extends$4({
         $event_id: eventId
       }, params);
       return function (target, name, descriptor) {
@@ -705,10 +711,10 @@
         getSessionId: getSessionId,
         getUserId: getUserId
       };
-      if (sessionExpiration) _Object$assign(final_option, { session_expiration: sessionExpiration });
-      if (serverUrl) _Object$assign(final_option, { server_url: serverUrl });
-      if (typeof getSessionId === 'function') _Object$assign(final_option, { getSessionId: getSessionId });
-      if (typeof getUserId === 'function') _Object$assign(final_option, { getUserId: getUserId });
+      if (sessionExpiration) _extends$4(final_option, { session_expiration: sessionExpiration });
+      if (serverUrl) _extends$4(final_option, { server_url: serverUrl });
+      if (typeof getSessionId === 'function') _extends$4(final_option, { getSessionId: getSessionId });
+      if (typeof getUserId === 'function') _extends$4(final_option, { getUserId: getUserId });
 
       Option.set(final_option);
       Param.set(params);
@@ -719,11 +725,11 @@
 
   function launchRocket(eventId, params, event) {
     if (typeof eventId === 'number') {
-      var final_params = _Object$assign({
+      var final_params = _extends$4({
         $event_id: eventId
       }, params);
       if (event) {
-        _Object$assign(final_params, eventInfoAnalyze(event));
+        _extends$4(final_params, eventInfoAnalyze(event));
       }
       send(final_params);
     } else {
