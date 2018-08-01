@@ -67,13 +67,13 @@ function getPresetParams(){
     }
     return;
   })();
-  const getSessionId=Option.get('getSessionId');
   return Object.assign({},getScreenInfo(),getLocationInfo(),getNavigatorInfo(),getDocumentInfo(),{
     '$dtsession_id':getDtSessionId(),
     '$app_key':Option.get('appKey'),
     '$DTTID':getDTTID(),
     '$user_id':userId,
-    '$session_id':sessionId
+    '$session_id':sessionId,
+    'is_debug':Option.get('debug')
   });
 }
 

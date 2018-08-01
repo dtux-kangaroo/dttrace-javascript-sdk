@@ -56,6 +56,7 @@ const init = (args) => {
     getUserId,
     sessionExpiration,
     serverUrl,
+    debug,
     params
   } = args;
 
@@ -70,10 +71,12 @@ const init = (args) => {
     let final_option={
       appKey,
       getSessionId,
-      getUserId
+      getUserId,
+      debug
     }
-    if(sessionExpiration) Object.assign(final_option,{session_expiration:sessionExpiration});
-    if(serverUrl) Object.assign(final_option,{server_url:serverUrl});
+    if(typeof debug === 'boolean') Object.assign(final_option,{debug});
+    if(typeof sessionExpiration === 'number') Object.assign(final_option,{session_expiration:sessionExpiration});
+    if(typeof serverUrl === 'string') Object.assign(final_option,{server_url:serverUrl});
     if(typeof getSessionId === 'function') Object.assign(final_option,{getSessionId});
     if(typeof getUserId === 'function') Object.assign(final_option,{getUserId});
 
