@@ -1,5 +1,6 @@
 import uuid from './uuid';
 import {getDtSessionId} from './session';
+import Cookie from './cookie';
 import Option from './option';
 
 const {screen,location,navigator}=window;
@@ -43,10 +44,11 @@ function getDocumentInfo(){
 }
 
 function getDTTID(){
-  let $DTTID=localStorage.getItem('$DTTID');
+  let $DTTID=localStorage?localStorage.getItem('$DTTID'):Cookie.get('$DTTID');
   if(!$DTTID){
     $DTTID=uuid();
-    localStorage.setItem('$DTTID',$DTTID)
+    Cookie.set('$DTTID',$DTTID,1000*60*60*24*30*6);
+    localStorage&&localStorage.setItem('$DTTID',$DTTID);
   }
   return $DTTID;
 }

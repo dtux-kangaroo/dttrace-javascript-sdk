@@ -135,14 +135,14 @@
 
     if (document.referrer === '' || document.referrer.indexOf(location.host) < 0) {
       cookie.set('DTTRACE_SESSIONID', sessionId, session_expiration);
-      localStorage$1.setItem('DTTRACE_SESSIONID', sessionId);
-      localStorage$1.setItem('DTTRACE_SESSIONID_EXPIRE', new Date().getTime() + session_expiration);
+      localStorage$1 && localStorage$1.setItem('DTTRACE_SESSIONID', sessionId);
+      localStorage$1 && localStorage$1.setItem('DTTRACE_SESSIONID_EXPIRE', new Date().getTime() + session_expiration);
     }
   };
 
   var getDtSessionId = function getDtSessionId() {
     if (cookie.get('DTTRACE_SESSIONID')) return cookie.get('DTTRACE_SESSIONID');
-    if (localStorage$1.getItem('DTTRACE_SESSIONID') && localStorage$1.getItem('DTTRACE_SESSIONID_EXPIRE') > new Date().getTime()) return localStorage$1.getItem('DTTRACE_SESSIONID');
+    if (localStorage$1 && localStorage$1.getItem('DTTRACE_SESSIONID') && localStorage$1.getItem('DTTRACE_SESSIONID_EXPIRE') > new Date().getTime()) return localStorage$1.getItem('DTTRACE_SESSIONID');
     var sessionId = uuid();
     createDtSessionId(sessionId);
     return sessionId;
@@ -195,10 +195,11 @@
   }
 
   function getDTTID() {
-    var $DTTID = localStorage.getItem('$DTTID');
+    var $DTTID = localStorage ? localStorage.getItem('$DTTID') : cookie.get('$DTTID');
     if (!$DTTID) {
       $DTTID = uuid();
-      localStorage.setItem('$DTTID', $DTTID);
+      cookie.set('$DTTID', $DTTID, 1000 * 60 * 60 * 24 * 30 * 6);
+      localStorage && localStorage.setItem('$DTTID', $DTTID);
     }
     return $DTTID;
   }
