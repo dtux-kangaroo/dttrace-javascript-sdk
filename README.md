@@ -58,7 +58,8 @@ Dttrace.init({
         return <用户系统自己分配的userId>;
     },
     sessionExpiration:'<Dttrace.js生成的session的过期时间，非必填>',
-    params:<自定义预置采集数据，会与Dttrace预置采集数据组合（Object），但不会覆盖Dttrace预置数据>
+    params:<自定义预置采集数据，会与Dttrace预置采集数据组合（Object），但不会覆盖Dttrace预置数据>，
+    debug:<是否开启Debug模式，非必填，默认false>
 });
 ```
 
@@ -157,6 +158,7 @@ class App extends PureComponent{
 **getUserId** |Function|非必选。获取用户系统的userId的函数
 **sessionExpiration** | Number|非必选。Dttrace.js生成的session的过期时间,精确到毫秒。默认30分钟
 **params** | Oject |非必选。全局的额外采集数据，会与默认采集数据组合
+**debug** |Boolean|非必选。是否开启debug模式。默认false
 
 **示例：**
 
