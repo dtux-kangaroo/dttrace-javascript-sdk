@@ -2,8 +2,39 @@ import Option from './option';
 import Param from './param';
 import md5 from './md5';
 const hex_md5=md5.hex_md5;
+//判断是否为Android
+function isAndroid(){
+  return navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Adr') > -1;
+}
+//判断是否为Ios
+function isIos(){
+  return !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); 
+}
+
+//通知ios
+function callIos(params,failback){
+  //这边写调用ios的方法
+}
+//通知Android
+function callAndroid(params,failback){
+  if((typeof DtstackData_APP_JS_Bridge === 'object') && (DtstackData_APP_JS_Bridge.sensorsdata_verify || DtstackData_APP_JS_Bridge.sensorsdata_track)){
+    if(DtstackData_APP_JS_Bridge.sensorsdata_verify){
+      DtstackData_APP_JS_Bridge.sensorsdata_verify(JSON.stringify(params));
+    }else{
+      SensorsData_APP_JS_Bridge.sensorsdata_track(JSON.stringify(params));
+    }
+  }else{
+    failback();
+  }
+}
+//通知H5
+function callH5(url,params){
+  const args = serilize(params);
+  const img = new Image(1, 1);
+  img.src = url + '?' + args;
+}
 //拼接字符串
-const serilize = (params) => {
+function serilize(params){
   let args = ''
   for (let i in params) {
     if (args != '') {
@@ -28,17 +59,17 @@ const send = (params) => {
       $timestamp:timestamp,
       $token:token
     });
-    if((typeof DtstackData_APP_JS_Bridge === 'object') && (DtstackData_APP_JS_Bridge.sensorsdata_verify || DtstackData_APP_JS_Bridge.sensorsdata_track)){
-      if(DtstackData_APP_JS_Bridge.sensorsdata_verify){
-        DtstackData_APP_JS_Bridge.sensorsdata_verify(JSON.stringify(newParams));
-      }else{
-        SensorsData_APP_JS_Bridge.sensorsdata_track(JSON.stringify(newParams));
-      }
+    if(isAndroid()){
+      callAndroid(newParams,()=>{
+        callH5(options.server_url,newParams);
+      });
+    }else if(isIos()){
+      callIos(newParams,()=>{
+        callH5(options.server_url,newParams);
+      });
     }else{
-      const args = serilize(newParams);
-      const img = new Image(1, 1);
-      img.src = options.server_url+'?' + args;
-    } 
+      callH5(options.server_url,newParams);
+    }
   }else{
     console.error(new Error('Dttrace not init,please excute Dttrace.init'));
   }

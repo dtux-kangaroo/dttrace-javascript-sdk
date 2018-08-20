@@ -17,7 +17,8 @@
   var DEFALUT_OPTIONS = {
     server_url: location$1.protocol + '//172.16.10.89:7001/',
     session_expiration: 30 * 60 * 1000,
-    status: 1
+    status: 1,
+    debug: false
   };
 
   var Option = {
@@ -489,12 +490,40 @@
     str_hmac_md5: str_hmac_md5
   };
 
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
-
   var _extends$2 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
   var hex_md5$1 = md5.hex_md5;
+  //判断是否为Android
+  function isAndroid() {
+    return navigator.userAgent.indexOf('Android') > -1 || navigator.userAgent.indexOf('Adr') > -1;
+  }
+  //判断是否为Ios
+  function isIos() {
+    return !!navigator.userAgent.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/);
+  }
+  //这边写调用ios的方法
+
+  //通知Android
+  function callAndroid(params, failback) {
+    if ((typeof DtstackData_APP_JS_Bridge === 'undefined' ? 'undefined' : _typeof(DtstackData_APP_JS_Bridge)) === 'object' && (DtstackData_APP_JS_Bridge.sensorsdata_verify || DtstackData_APP_JS_Bridge.sensorsdata_track)) {
+      if (DtstackData_APP_JS_Bridge.sensorsdata_verify) {
+        DtstackData_APP_JS_Bridge.sensorsdata_verify(JSON.stringify(params));
+      } else {
+        SensorsData_APP_JS_Bridge.sensorsdata_track(JSON.stringify(params));
+      }
+    } else {
+      failback();
+    }
+  }
+  //通知H5
+  function callH5(url, params) {
+    var args = serilize(params);
+    var img = new Image(1, 1);
+    img.src = url + '?' + args;
+  }
   //拼接字符串
-  var serilize = function serilize(params) {
+  function serilize(params) {
     var args = '';
     for (var i in params) {
       if (args != '') {
@@ -508,7 +537,7 @@
       }
     }
     return args;
-  };
+  }
   //采集数据
   var send = function send(params) {
     var options = Option.get();
@@ -519,16 +548,12 @@
         $timestamp: timestamp,
         $token: token
       });
-      if ((typeof DtstackData_APP_JS_Bridge === 'undefined' ? 'undefined' : _typeof(DtstackData_APP_JS_Bridge)) === 'object' && (DtstackData_APP_JS_Bridge.sensorsdata_verify || DtstackData_APP_JS_Bridge.sensorsdata_track)) {
-        if (DtstackData_APP_JS_Bridge.sensorsdata_verify) {
-          DtstackData_APP_JS_Bridge.sensorsdata_verify(JSON.stringify(newParams));
-        } else {
-          SensorsData_APP_JS_Bridge.sensorsdata_track(JSON.stringify(newParams));
-        }
-      } else {
-        var args = serilize(newParams);
-        var img = new Image(1, 1);
-        img.src = options.server_url + '?' + args;
+      if (isAndroid()) {
+        callAndroid(newParams, function () {
+          callH5(options.server_url, newParams);
+        });
+      } else if (isIos()) ; else {
+        callH5(options.server_url, newParams);
       }
     } else {
       console.error(new Error('Dttrace not init,please excute Dttrace.init'));
