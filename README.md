@@ -175,7 +175,8 @@ class App extends PureComponent{
         params:{
             "realName":"隔壁老王",
             "role":["一级管理员","二级管理员"]
-        }
+        },
+        debug:true
     });
 ```
 
