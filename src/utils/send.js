@@ -14,14 +14,19 @@ function isIos(){
 //通知ios
 function callIos(params,failback){
   //这边写调用ios的方法
+  if((typeof window.DtstackData_APP_JS_Bridge === 'object') && (window.DtstackData_APP_JS_Bridge.dttrace_track)){
+    window.DtstackData_APP_JS_Bridge.dttrace_track(params);
+  }else{
+    failback();
+  }
 }
 //通知Android
 function callAndroid(params,failback){
-  if((typeof DtstackData_APP_JS_Bridge === 'object') && (DtstackData_APP_JS_Bridge.sensorsdata_verify || DtstackData_APP_JS_Bridge.sensorsdata_track)){
-    if(DtstackData_APP_JS_Bridge.sensorsdata_verify){
-      DtstackData_APP_JS_Bridge.sensorsdata_verify(JSON.stringify(params));
+  if((typeof DtstackData_APP_JS_Bridge === 'object') && (DtstackData_APP_JS_Bridge.dttrace_verify || DtstackData_APP_JS_Bridge.dttrace_track)){
+    if(DtstackData_APP_JS_Bridge.dttrace_verify){
+      DtstackData_APP_JS_Bridge.dttrace_verify(JSON.stringify(params));
     }else{
-      SensorsData_APP_JS_Bridge.sensorsdata_track(JSON.stringify(params));
+      SensorsData_APP_JS_Bridge.dttrace_track(JSON.stringify(params));
     }
   }else{
     failback();
