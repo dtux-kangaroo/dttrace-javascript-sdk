@@ -25,7 +25,7 @@ export default () => {
     //监听页面进入
     const pageEnterHandler=()=>{
       send({
-        $event_id:2001,
+        $event_id:3001,
       }); 
     }
 
@@ -61,7 +61,7 @@ export default () => {
       const current_time = new Date().getTime(); 
       const $stay_time = current_time - enter_time;
       send({
-        $event_id:2002,
+        $event_id:3002,
         $stay_time
       });
     }
