@@ -655,11 +655,11 @@
         var target_element = final_event.target || final_event.srcElement;
         if (target_element.className.indexOf('dttrace') > -1) {
           var params = {};
-          Object.keys(target_element.dataset).filter(function (key) {
+          for (var key in target_element.dataset) {
             if (key.indexOf('dttrace') > -1) {
               params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
             }
-          });
+          }
           if (params.eventid) {
             params.$event_id = params.eventid;
             delete params.eventid;
@@ -691,15 +691,9 @@
   function carryRocket(eventId, fun, params) {
     if (typeof eventId === 'number') {
       if (typeof fun === 'function') {
-        var total = fun.length;
         return function () {
-          var final_event = window.event ? window.event : arg0;
-
-          for (var _len = arguments.length, argsArray = Array(_len), _key = 0; _key < _len; _key++) {
-            argsArray[_key] = arguments[_key];
-          }
-
-          var result = fun.apply(this, argsArray);
+          var final_event = window.event ? window.event : arguments[0];
+          var result = fun.apply(this, arguments);
           send(_extends$4({
             $event_id: eventId
           }, eventInfoAnalyze(final_event), params, result));
