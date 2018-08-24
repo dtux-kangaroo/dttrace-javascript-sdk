@@ -638,7 +638,7 @@
       //监听页面进入
       var pageEnterHandler = function pageEnterHandler() {
         send({
-          $event_id: 2001
+          $event_id: 3001
         });
       };
 
@@ -673,7 +673,7 @@
         var current_time = new Date().getTime();
         var $stay_time = current_time - enter_time;
         send({
-          $event_id: 2002,
+          $event_id: 3002,
           $stay_time: $stay_time
         });
       };
