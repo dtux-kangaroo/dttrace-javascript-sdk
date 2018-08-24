@@ -1,3 +1,4 @@
+//事件信息采集器
 export const eventInfoAnalyze=(event)=>{
   if(!event.preventDefault) return {};
 

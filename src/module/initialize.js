@@ -1,10 +1,8 @@
 import send from './send';
-import ready from './ready';
+import ready from '../utils/ready';
 import {createDtSessionId} from './session';
 import {eventInfoAnalyze} from './event';
-import uuid from './uuid';
-
-
+import uuid from '../utils/uuid';
 
 // 添加监听事件
 const addEventListener = (element, evType, fn, useCapture) => {
@@ -45,11 +43,11 @@ export default () => {
       const target_element =final_event.target||final_event.srcElement;
       if (target_element.className.indexOf('dttrace') > -1) {
         const params = {};
-        Object.keys(target_element.dataset).filter(key => {
+        for(let key in target_element.dataset){
           if (key.indexOf('dttrace') > -1) {
             params[key.substring(7).toLocaleLowerCase()] = target_element.dataset[key];
           }
-        });
+        }
         if(params.eventid){
           params.$event_id=params.eventid;
           delete params.eventid;

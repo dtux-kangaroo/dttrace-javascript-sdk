@@ -1,6 +1,6 @@
 import Option from './option';
 import Param from './param';
-import md5 from './md5';
+import md5 from '../utils/md5';
 const hex_md5=md5.hex_md5;
 //判断是否为Android
 function isAndroid(){

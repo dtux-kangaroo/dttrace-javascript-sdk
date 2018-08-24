@@ -1,26 +1,18 @@
-import Option from './utils/option';
-import Param from './utils/param';
-import send from './utils/send';
-import cookie from './utils/cookie';
-import initialize from './utils/initialize';
+import Option from './module/option';
+import Param from './module/param';
+import send from './module/send';
+import initialize from './module/initialize';
 import {
   eventInfoAnalyze
-} from './utils/event';
-
+} from './module/event';
+import cookie from './utils/cookie';
 
 function carryRocket(eventId,fun,params){
   if(typeof eventId === 'number'){
     if(typeof fun === 'function'){
-      let total = fun.length
-      let current = 0
-      const argsArray = []
-      while (current < total) {
-        argsArray.push('arg' + current)
-        current++
-      }
-      return function(...argsArray){
-        const final_event = window.event ? window.event : arg0;
-        const result=fun.apply(this,argsArray);
+      return function(){
+        const final_event = window.event ? window.event : arguments[0];
+        const result=fun.apply(this,arguments);
         send(Object.assign({
           $event_id:eventId
         }, eventInfoAnalyze(final_event),params,result))

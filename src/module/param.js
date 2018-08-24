@@ -1,9 +1,7 @@
-import uuid from './uuid';
+import uuid from '../utils/uuid';
 import {getDtSessionId} from './session';
-import Cookie from './cookie';
+import Cookie from '../utils/cookie';
 import Option from './option';
-
-const {screen,location,navigator}=window;
 
 function getReferrerHost(referrer){
   const REG_TEST_REFERRER_LEGALITY=/:\/\/.*\//
