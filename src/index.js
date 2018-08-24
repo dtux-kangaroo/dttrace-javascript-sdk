@@ -1,11 +1,11 @@
-import Option from './utils/option';
-import Param from './utils/param';
-import send from './utils/send';
-import cookie from './utils/cookie';
-import initialize from './utils/initialize';
+import Option from './module/option';
+import Param from './module/param';
+import send from './module/send';
+import initialize from './module/initialize';
 import {
   eventInfoAnalyze
-} from './utils/event';
+} from './module/event';
+import cookie from './utils/cookie';
 
 
 function carryRocket(eventId,fun,params){

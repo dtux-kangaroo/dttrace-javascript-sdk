@@ -1,8 +1,6 @@
 import Option from  './option';
-import cookie from './cookie';
-import uuid from './uuid';
-
-const {localStorage}=window;
+import cookie from '../utils/cookie';
+import uuid from '../utils/uuid';
 
 export const createDtSessionId = (sessionId)=>{
   const {session_expiration} = Option.get();

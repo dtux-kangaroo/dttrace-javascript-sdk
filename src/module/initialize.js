@@ -1,10 +1,8 @@
 import send from './send';
-import ready from './ready';
+import ready from '../utils/ready';
 import {createDtSessionId} from './session';
 import {eventInfoAnalyze} from './event';
-import uuid from './uuid';
-
-
+import uuid from '../utils/uuid';
 
 // 添加监听事件
 const addEventListener = (element, evType, fn, useCapture) => {
