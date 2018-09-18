@@ -9,7 +9,25 @@
   (global.Dttrace = factory());
 }(this, (function () { 'use strict';
 
-  var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+  };
+
+  var _extends = Object.assign || function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+
+    return target;
+  };
 
   var DEFALUT_OPTIONS = {
     server_url: location.protocol + '//172.16.10.89:7001/',
@@ -19,11 +37,11 @@
   };
 
   var Option = {
-    get: function get(name) {
+    get: function get$$1(name) {
       if (name) return DEFALUT_OPTIONS[name];
       return DEFALUT_OPTIONS;
     },
-    set: function set(options) {
+    set: function set$$1(options) {
       _extends(DEFALUT_OPTIONS, options);
       return DEFALUT_OPTIONS;
     }
@@ -142,8 +160,6 @@
     return sessionId;
   };
 
-  var _extends$1 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
   function getReferrerHost(referrer) {
     var REG_TEST_REFERRER_LEGALITY = /:\/\/.*\//;
     if (REG_TEST_REFERRER_LEGALITY.test(referrer)) {
@@ -207,7 +223,7 @@
       }
       return;
     }();
-    return _extends$1({}, getScreenInfo(), getLocationInfo(), getNavigatorInfo(), getDocumentInfo(), {
+    return _extends({}, getScreenInfo(), getLocationInfo(), getNavigatorInfo(), getDocumentInfo(), {
       '$dtsession_id': getDtSessionId(),
       '$app_key': Option.get('appKey'),
       '$DTTID': getDTTID(),
@@ -220,13 +236,13 @@
   var DEFALUT_PARAMS = {};
 
   var Param = {
-    get: function get(name) {
-      var params = _extends$1({}, getPresetParams(), DEFALUT_PARAMS);
+    get: function get$$1(name) {
+      var params = _extends({}, getPresetParams(), DEFALUT_PARAMS);
       if (name) return params[name];
       return params;
     },
-    set: function set(params) {
-      return _extends$1(DEFALUT_PARAMS, params);
+    set: function set$$1(params) {
+      return _extends(DEFALUT_PARAMS, params);
     },
     remove: function remove(name) {
       var value = DEFALUT_PARAMS[name];
@@ -477,9 +493,6 @@
     str_hmac_md5: str_hmac_md5
   };
 
-  var _extends$2 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
   var hex_md5$1 = md5.hex_md5;
   //判断是否为Android
   function isAndroid() {
@@ -539,7 +552,7 @@
     if (options.status) {
       var timestamp = new Date().getTime();
       var token = hex_md5$1(options.appKey + timestamp);
-      var newParams = _extends$2({}, Param.get(), params, {
+      var newParams = _extends({}, Param.get(), params, {
         $timestamp: timestamp,
         $token: token
       });
@@ -615,8 +628,6 @@
       };
   };
 
-  var _extends$3 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
   // 添加监听事件
   var addEventListener = function addEventListener(element, evType, fn, useCapture) {
     if (element.addEventListener) {
@@ -664,7 +675,7 @@
             params.$event_id = params.eventid;
             delete params.eventid;
           }
-          send(_extends$3({}, eventInfoAnalyze(final_event), params));
+          send(_extends({}, eventInfoAnalyze(final_event), params));
         }
       }, false);
 
@@ -686,15 +697,13 @@
     });
   });
 
-  var _extends$4 = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
   function carryRocket(eventId, fun, params) {
     if (typeof eventId === 'number') {
       if (typeof fun === 'function') {
         return function () {
           var final_event = window.event ? window.event : arguments[0];
           var result = fun.apply(this, arguments);
-          send(_extends$4({
+          send(_extends({
             $event_id: eventId
           }, eventInfoAnalyze(final_event), params, result));
         };
@@ -709,7 +718,7 @@
   //DtaRocket注解
   function DttraceRocket(eventId, params) {
     if (typeof eventId === 'number') {
-      var final_params = _extends$4({
+      var final_params = _extends({
         $event_id: eventId
       }, params);
       return function (target, name, descriptor) {
@@ -746,11 +755,11 @@
         getUserId: getUserId,
         debug: debug
       };
-      if (typeof debug === 'boolean') _extends$4(final_option, { debug: debug });
-      if (typeof sessionExpiration === 'number') _extends$4(final_option, { session_expiration: sessionExpiration });
-      if (typeof serverUrl === 'string') _extends$4(final_option, { server_url: serverUrl });
-      if (typeof getSessionId === 'function') _extends$4(final_option, { getSessionId: getSessionId });
-      if (typeof getUserId === 'function') _extends$4(final_option, { getUserId: getUserId });
+      if (typeof debug === 'boolean') _extends(final_option, { debug: debug });
+      if (typeof sessionExpiration === 'number') _extends(final_option, { session_expiration: sessionExpiration });
+      if (typeof serverUrl === 'string') _extends(final_option, { server_url: serverUrl });
+      if (typeof getSessionId === 'function') _extends(final_option, { getSessionId: getSessionId });
+      if (typeof getUserId === 'function') _extends(final_option, { getUserId: getUserId });
 
       Option.set(final_option);
       Param.set(params);
@@ -761,11 +770,11 @@
 
   function launchRocket(eventId, params, event) {
     if (typeof eventId === 'number') {
-      var final_params = _extends$4({
+      var final_params = _extends({
         $event_id: eventId
       }, params);
       if (event) {
-        _extends$4(final_params, eventInfoAnalyze(event));
+        _extends(final_params, eventInfoAnalyze(event));
       }
       send(final_params);
     } else {

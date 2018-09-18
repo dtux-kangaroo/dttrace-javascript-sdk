@@ -46,7 +46,7 @@ function getConfig(name){
     plugins:[
       bable({
         exclude: 'node_modules/**',
-        runtimeHelpers: true 
+        plugins: ['external-helpers']
       })
     ].concat(opts.plugins||[])
   }
